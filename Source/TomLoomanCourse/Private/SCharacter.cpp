@@ -99,4 +99,5 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Input->BindAction(Input_Turn, ETriggerEvent::Triggered, this, &ASCharacter::Look);
 
 	Input->BindAction(Input_PrimaryAttack, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
+	Input->BindAction(Input_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 }

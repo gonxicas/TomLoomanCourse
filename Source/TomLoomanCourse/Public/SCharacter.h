@@ -43,6 +43,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_PrimaryAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_Jump;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
