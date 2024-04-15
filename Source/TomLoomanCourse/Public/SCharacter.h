@@ -23,6 +23,9 @@ public:
 	ASCharacter();
 
 protected:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
+	
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
 	
@@ -37,6 +40,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_Turn;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_PrimaryAttack;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,6 +54,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void Test();
+	void PrimaryAttack() ;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

@@ -14,18 +14,18 @@
 // Sets default values
 ASCharacter::ASCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->bUsePawnControlRotation = true;
-	
+
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	
+
 	bUseControllerRotationYaw = false;
 }
 
@@ -33,7 +33,6 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASCharacter::Move(const FInputActionValue& ActionValue)
@@ -42,12 +41,12 @@ void ASCharacter::Move(const FInputActionValue& ActionValue)
 
 	auto ControlRot = GetControlRotation();
 	ControlRot.Pitch = 0;
-	ControlRot.Roll= 0;
-	
+	ControlRot.Roll = 0;
+
 	AddMovementInput(ControlRot.Vector(), Value.Y);
 
 	auto RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
-	
+
 	AddMovementInput(RightVector, Value.X);
 }
 
@@ -63,12 +62,23 @@ void ASCharacter::Look(const FInputActionValue& ActionValue)
 void ASCharacter::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ASCharacter::Test()
 {
 	AddMovementInput(GetActorForwardVector(), 1);
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	
+	auto SpawnTransformMatrix = FTransform(GetControlRotation(), HandLocation);
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransformMatrix, SpawnParameters);
 }
 
 // Called to bind functionality to input
@@ -84,9 +94,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Subsystem->ClearAllMappings();
 
 	Subsystem->AddMappingContext(DefaultInputMapping, 0);
-	
-    Input->BindAction(Input_MoveForward, ETriggerEvent::Triggered, this, &ASCharacter::Move);
+
+	Input->BindAction(Input_MoveForward, ETriggerEvent::Triggered, this, &ASCharacter::Move);
 	Input->BindAction(Input_Turn, ETriggerEvent::Triggered, this, &ASCharacter::Look);
 
+	Input->BindAction(Input_PrimaryAttack, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
 }
-
