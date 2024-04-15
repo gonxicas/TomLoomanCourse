@@ -40,8 +40,8 @@ protected:
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void MoveForward(const FInputActionValue& ActionValue);
-	void Turn(const FInputActionValue& ActionValue);
+	void Move(const FInputActionValue& ActionValue);
+	void Look(const FInputActionValue& ActionValue);
 
 public:	
 	// Called every frame

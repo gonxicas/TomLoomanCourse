@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -18,9 +19,14 @@ ASCharacter::ASCharacter()
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(RootComponent);
+	SpringArmComponent->bUsePawnControlRotation = true;
 	
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	
+	bUseControllerRotationYaw = false;
 }
 
 // Called when the game starts or when spawned
@@ -30,18 +36,27 @@ void ASCharacter::BeginPlay()
 	
 }
 
-void ASCharacter::MoveForward(const FInputActionValue& ActionValue)
+void ASCharacter::Move(const FInputActionValue& ActionValue)
 {
-	float value = ActionValue.Get<float>();
+	auto Value = ActionValue.Get<FVector2d>();
 
-	AddMovementInput(GetActorForwardVector(), value);
+	auto ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0;
+	ControlRot.Roll= 0;
+	
+	AddMovementInput(ControlRot.Vector(), Value.Y);
+
+	auto RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+	
+	AddMovementInput(RightVector, Value.X);
 }
 
-void ASCharacter::Turn(const FInputActionValue& ActionValue)
+void ASCharacter::Look(const FInputActionValue& ActionValue)
 {
-	const auto Value = ActionValue.Get<float>();
+	const auto Value = ActionValue.Get<FVector2d>();
 
-	AddControllerYawInput(Value);
+	AddControllerPitchInput(-Value.Y);
+	AddControllerYawInput(Value.X);
 }
 
 // Called every frame
@@ -70,8 +85,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	Subsystem->AddMappingContext(DefaultInputMapping, 0);
 	
-    Input->BindAction(Input_MoveForward, ETriggerEvent::Triggered, this, &ASCharacter::MoveForward);
-	Input->BindAction(Input_Turn, ETriggerEvent::Triggered, this, &ASCharacter::Turn);
+    Input->BindAction(Input_MoveForward, ETriggerEvent::Triggered, this, &ASCharacter::Move);
+	Input->BindAction(Input_Turn, ETriggerEvent::Triggered, this, &ASCharacter::Look);
 
 }
 
