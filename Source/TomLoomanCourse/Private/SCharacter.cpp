@@ -74,20 +74,28 @@ void ASCharacter::Test()
 
 void ASCharacter::PrimaryAttack()
 {
+	PlayAnimMontage(AttackAnim);
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
+	                                       &ASCharacter::PrimaryAttackTimeElapsed, .2f);
+}
+
+void ASCharacter::PrimaryAttackTimeElapsed()
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	
+
 	auto SpawnTransformMatrix = FTransform(GetControlRotation(), HandLocation);
 
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
+
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransformMatrix, SpawnParameters);
 }
 
 void ASCharacter::PrimaryInteract()
 {
-	if(!InteractionComponent) return;
-	
+	if (!InteractionComponent) return;
+
 	InteractionComponent->PrimaryInteract();
 }
 
