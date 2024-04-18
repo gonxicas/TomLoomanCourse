@@ -4,7 +4,6 @@
 #include "SInteractionComponent.h"
 #include "SGameplayInterface.h"
 
-
 // Sets default values for this component's properties
 USInteractionComponent::USInteractionComponent()
 {
@@ -36,7 +35,7 @@ void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void USInteractionComponent::PrimaryInteract()
 {
-	FHitResult Hit;
+	// FHitResult Hit;
 	FVector End;
 
 	FVector EyeLocation;
@@ -49,10 +48,34 @@ void USInteractionComponent::PrimaryInteract()
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
 	End = EyeLocation + (EyeRotation.Vector() * 1000);
-	GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
+	// auto blockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
 
-	auto HitActor = Hit.GetActor();
-	if(!HitActor || !HitActor->Implements<USGameplayInterface>()) return;
+	TArray<FHitResult> Hits;
+	FCollisionShape Shape;
+	auto Radius = 30.f;
+	Shape.SetSphere(Radius);
+	auto blockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
 
-	ISGameplayInterface::Execute_Interact(HitActor, Cast<APawn>(MyOwner));
+
+	FColor Color = blockingHit ? FColor::Green : FColor::Red;
+	for (FHitResult Hit : Hits)
+	{
+		auto HitActor = Hit.GetActor();
+
+		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, Color, false, 2.f);
+		
+		if (!HitActor || !HitActor->Implements<USGameplayInterface>()) continue;
+		
+		ISGameplayInterface::Execute_Interact(HitActor, Cast<APawn>(MyOwner));
+		blockingHit = true;
+		break;
+		
+		
+	}
+	
+	DrawDebugLine(GetWorld(), EyeLocation, End, Color,
+					  false, 2.f, 0, 2.f);
+
+	
+	
 }
