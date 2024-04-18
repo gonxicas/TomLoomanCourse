@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USInteractionComponent;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
@@ -31,6 +32,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	USInteractionComponent* InteractionComponent;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* DefaultInputMapping;
@@ -46,6 +50,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_Jump;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_PrimaryInteract;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,6 +65,7 @@ public:
 
 	void Test();
 	void PrimaryAttack() ;
+	void PrimaryInteract();
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
