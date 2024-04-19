@@ -19,6 +19,6 @@ class TOMLOOMANCOURSE_API ISGameplayInterface
 	GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
 };
