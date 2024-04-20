@@ -80,12 +80,8 @@ void ASCharacter::PrimaryAttack()
 	                                       &ASCharacter::PrimaryAttackTimeElapsed, .2f);
 }
 
-void ASCharacter::PrimaryAttackTimeElapsed()
+void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE::Math::TRotator<double>& ProjectileRotation) const
 {
-	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	
-
 	const auto CameraLocation = CameraComponent->GetComponentLocation();
 	const auto CameraRotation = CameraComponent->GetComponentRotation();
 
@@ -100,21 +96,48 @@ void ASCharacter::PrimaryAttackTimeElapsed()
 
 	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams);
 	auto TargetPoint = BlockHit ? Hit.ImpactPoint : End;
-	auto ProjectileRotation = FRotationMatrix::MakeFromX(TargetPoint - HandLocation).Rotator();
-	
-	const auto SpawnTransformMatrix = FTransform(ProjectileRotation, HandLocation);
+	ProjectileRotation = FRotationMatrix::MakeFromX(TargetPoint - HandLocation).Rotator();
 
+
+	DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
+	              false, 2.f, 0, 2.f);
+	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
+	DrawDebugLine(GetWorld(), HandLocation, TargetPoint, FColor::Green,
+	              false, 2.f, 0, 2.f);
+}
+
+void ASCharacter::SpawnProjectile(UClass* Object, const FVector& From)
+{
+	UE::Math::TRotator<double> ProjectileRotation;
+	AdjustSpawnRotationWithTarget(From, ProjectileRotation);
+
+	const auto SpawnTransformMatrix = FTransform(ProjectileRotation, From);
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
 	
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransformMatrix, SpawnParameters);
+	GetWorld()->SpawnActor<AActor>(Object, SpawnTransformMatrix, SpawnParameters);
+}
+
+void ASCharacter::PrimaryAttackTimeElapsed()
+{
+	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	SpawnProjectile(PrimaryAttackProjectileClass, HandLocation);
 	
-	DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
-	              false, 2.f, 0, 2.f);
-	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
-	DrawDebugLine(GetWorld(), SpawnTransformMatrix.GetLocation(), TargetPoint, FColor::Green,
-				  false, 2.f, 0, 2.f);
+}
+
+void ASCharacter::PrimaryAbility()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
+										   &ASCharacter::PrimaryAbilityTimeElapsed, .2f);
+}
+
+void ASCharacter::PrimaryAbilityTimeElapsed()
+{
+	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	SpawnProjectile(PrimaryAbilityProjectileClass, HandLocation);
 }
 
 void ASCharacter::PrimaryInteract()
@@ -142,6 +165,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Input->BindAction(Input_Turn, ETriggerEvent::Triggered, this, &ASCharacter::Look);
 
 	Input->BindAction(Input_PrimaryAttack, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
+	Input->BindAction(Input_PrimaryHability, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAbility);
 	Input->BindAction(Input_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 
 	Input->BindAction(Input_PrimaryInteract, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryInteract);

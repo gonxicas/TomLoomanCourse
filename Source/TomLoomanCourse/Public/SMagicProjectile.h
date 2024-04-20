@@ -3,15 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SProjectile.h"
 #include "GameFramework/Actor.h"
 #include "SMagicProjectile.generated.h"
 
-class UProjectileMovementComponent;
-class USphereComponent;
-class UParticleSystemComponent;
-
 UCLASS()
-class TOMLOOMANCOURSE_API ASMagicProjectile : public AActor
+class TOMLOOMANCOURSE_API ASMagicProjectile : public ASProjectile
 {
 	GENERATED_BODY()
 	
@@ -20,14 +17,9 @@ public:
 	ASMagicProjectile();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USphereComponent* SphereComponent;
+	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UProjectileMovementComponent* ProjectileMovementComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UParticleSystemComponent* ParticleEffectComponent;
 
 
 	virtual void BeginPlay() override;
