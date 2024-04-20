@@ -34,7 +34,10 @@ protected:
 	USInteractionComponent* InteractionComponent;
 	
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> ProjectileClass;
+	TSubclassOf<AActor> PrimaryAttackProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> PrimaryAbilityProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
@@ -54,6 +57,9 @@ protected:
 	UInputAction* Input_PrimaryAttack;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_PrimaryHability;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_Jump;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -71,8 +77,12 @@ public:
 
 	void Test();
 	void PrimaryAttack() ;
+	void AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE::Math::TRotator<double>& ProjectileRotation) const;
 	void PrimaryAttackTimeElapsed();
+	void PrimaryAbilityTimeElapsed();
 	void PrimaryInteract();
+	void PrimaryAbility();
+	void SpawnProjectile(UClass* Object, const FVector &From);
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
