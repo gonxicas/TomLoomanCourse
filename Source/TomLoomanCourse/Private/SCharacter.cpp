@@ -82,15 +82,39 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttackTimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
-	auto SpawnTransformMatrix = FTransform(GetControlRotation(), HandLocation);
+	
+
+	const auto CameraLocation = CameraComponent->GetComponentLocation();
+	const auto CameraRotation = CameraComponent->GetComponentRotation();
+
+
+	FHitResult Hit;
+	auto End = CameraLocation + CameraRotation.Vector() * 10000;
+	
+	FCollisionObjectQueryParams QueryParams;
+	QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	QueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+
+
+	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams);
+	auto TargetPoint = BlockHit ? Hit.ImpactPoint : End;
+	auto ProjectileRotation = FRotationMatrix::MakeFromX(TargetPoint - HandLocation).Rotator();
+	
+	const auto SpawnTransformMatrix = FTransform(ProjectileRotation, HandLocation);
 
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
 	
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransformMatrix, SpawnParameters);
+	
+	DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
+	              false, 2.f, 0, 2.f);
+	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
+	DrawDebugLine(GetWorld(), SpawnTransformMatrix.GetLocation(), TargetPoint, FColor::Green,
+				  false, 2.f, 0, 2.f);
 }
 
 void ASCharacter::PrimaryInteract()
