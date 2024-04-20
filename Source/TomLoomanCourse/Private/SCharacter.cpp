@@ -140,6 +140,20 @@ void ASCharacter::PrimaryAbilityTimeElapsed()
 	SpawnProjectile(PrimaryAbilityProjectileClass, HandLocation);
 }
 
+void ASCharacter::SecondaryAbility()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
+										   &ASCharacter::SecondaryAbilityTimeElapsed, .2f);
+}
+
+void ASCharacter::SecondaryAbilityTimeElapsed()
+{
+	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	SpawnProjectile(SecondaryAbilityProjectileClass, HandLocation);
+}
+
 void ASCharacter::PrimaryInteract()
 {
 	if (!InteractionComponent) return;
@@ -165,7 +179,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Input->BindAction(Input_Turn, ETriggerEvent::Triggered, this, &ASCharacter::Look);
 
 	Input->BindAction(Input_PrimaryAttack, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
-	Input->BindAction(Input_PrimaryHability, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAbility);
+	Input->BindAction(Input_PrimaryAbility, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAbility);
+	Input->BindAction(Input_SecondaryAbility, ETriggerEvent::Triggered, this, &ASCharacter::SecondaryAbility);
 	Input->BindAction(Input_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 
 	Input->BindAction(Input_PrimaryInteract, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryInteract);

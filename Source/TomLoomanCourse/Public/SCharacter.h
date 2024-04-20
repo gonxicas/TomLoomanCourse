@@ -40,6 +40,9 @@ protected:
 	TSubclassOf<AActor> PrimaryAbilityProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> SecondaryAbilityProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandlePrimaryAttack;
@@ -57,7 +60,10 @@ protected:
 	UInputAction* Input_PrimaryAttack;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* Input_PrimaryHability;
+	UInputAction* Input_PrimaryAbility;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_SecondaryAbility;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_Jump;
@@ -80,6 +86,8 @@ public:
 	void AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE::Math::TRotator<double>& ProjectileRotation) const;
 	void PrimaryAttackTimeElapsed();
 	void PrimaryAbilityTimeElapsed();
+	void SecondaryAbility();
+	void SecondaryAbilityTimeElapsed();
 	void PrimaryInteract();
 	void PrimaryAbility();
 	void SpawnProjectile(UClass* Object, const FVector &From);
