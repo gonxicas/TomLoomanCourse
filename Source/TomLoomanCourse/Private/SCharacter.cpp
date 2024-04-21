@@ -92,6 +92,7 @@ void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE:
 	FCollisionObjectQueryParams QueryParams;
 	QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	QueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	QueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
 
 	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams);
