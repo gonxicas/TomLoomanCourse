@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -24,6 +25,8 @@ ASCharacter::ASCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
 

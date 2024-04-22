@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USAttributeComponent;
 class USInteractionComponent;
 struct FInputActionValue;
 class UInputAction;
@@ -32,7 +33,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Interaction")
 	USInteractionComponent* InteractionComponent;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> PrimaryAttackProjectileClass;
 
@@ -46,7 +47,10 @@ protected:
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandlePrimaryAttack;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USAttributeComponent* AttributeComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* DefaultInputMapping;
 
@@ -71,27 +75,26 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_PrimaryInteract;
 
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& ActionValue);
 	void Look(const FInputActionValue& ActionValue);
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void Test();
-	void PrimaryAttack() ;
-	void AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE::Math::TRotator<double>& ProjectileRotation) const;
+	void PrimaryAttack();
+	void AdjustSpawnRotationWithTarget(const FVector& HandLocation,
+	                                   UE::Math::TRotator<double>& ProjectileRotation) const;
 	void PrimaryAttackTimeElapsed();
 	void PrimaryAbilityTimeElapsed();
 	void SecondaryAbility();
 	void SecondaryAbilityTimeElapsed();
 	void PrimaryInteract();
 	void PrimaryAbility();
-	void SpawnProjectile(UClass* Object, const FVector &From);
+	void SpawnProjectile(UClass* Object, const FVector& From);
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

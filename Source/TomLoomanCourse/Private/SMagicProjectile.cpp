@@ -1,26 +1,31 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SMagicProjectile.h"
+
+#include "SAttributeComponent.h"
+#include "Components/SphereComponent.h"
 
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
 {
-
 }
 
-// Called when the game starts or when spawned
-void ASMagicProjectile::BeginPlay()
+void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                       const FHitResult& SweepResult)
 {
-	Super::BeginPlay();
-	
+	if (!ensure(OtherActor)) return;
+
+	auto AttributeComponent = Cast<USAttributeComponent>(
+		OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+
+	if(!AttributeComponent) return;
+
+	AttributeComponent->ApplyHealthChange(-20.f);
+	Destroy();
 }
 
-// Called every frame
-void ASMagicProjectile::Tick(float DeltaTime)
+void ASMagicProjectile::PostInitializeComponents()
 {
-	Super::Tick(DeltaTime);
-
+	Super::PostInitializeComponents();
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 }
-
