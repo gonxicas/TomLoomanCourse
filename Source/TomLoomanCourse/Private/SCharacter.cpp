@@ -64,6 +64,16 @@ void ASCharacter::Look(const FInputActionValue& ActionValue)
 	AddControllerYawInput(Value.X);
 }
 
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth,
+	float Delta)
+{
+	if(NewHealth <= .0f && Delta < .0f)
+	{
+		auto PlayerController = Cast<APlayerController>(GetController());
+		DisableInput(PlayerController);
+	}
+}
+
 // Called every frame
 void ASCharacter::Tick(const float DeltaTime)
 {

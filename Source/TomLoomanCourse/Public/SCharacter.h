@@ -79,6 +79,10 @@ protected:
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& ActionValue);
 	void Look(const FInputActionValue& ActionValue);
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
+
 
 public:
 	// Called every frame
