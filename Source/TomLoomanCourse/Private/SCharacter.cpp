@@ -93,18 +93,15 @@ void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE:
 	auto End = CameraLocation + CameraRotation.Vector() * 10000;
 	
 	FCollisionObjectQueryParams QueryParams;
+	FCollisionQueryParams Test;
+	Test.AddIgnoredActor(this);
 	QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	QueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
 	QueryParams.AddObjectTypesToQuery(ECC_Pawn);
 	
 
 
-	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams);
-
-	if(BlockHit && Hit.GetActor() == this)
-	{
-		BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, Hit.ImpactPoint + CameraRotation.Vector() * 100, End, QueryParams);
-	}
+	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams, Test);
 	
 	auto TargetPoint = BlockHit ? Hit.ImpactPoint : End;
 	ProjectileRotation = FRotationMatrix::MakeFromX(TargetPoint - HandLocation).Rotator();
