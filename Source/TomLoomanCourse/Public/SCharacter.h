@@ -77,8 +77,13 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	void Move(const FInputActionValue& ActionValue);
 	void Look(const FInputActionValue& ActionValue);
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
+
 
 public:
 	// Called every frame

@@ -41,6 +41,13 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
 void ASCharacter::Move(const FInputActionValue& ActionValue)
 {
 	auto Value = ActionValue.Get<FVector2d>();
@@ -62,6 +69,16 @@ void ASCharacter::Look(const FInputActionValue& ActionValue)
 
 	AddControllerPitchInput(-Value.Y);
 	AddControllerYawInput(Value.X);
+}
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth,
+	float Delta)
+{
+	if(NewHealth <= .0f && Delta < .0f)
+	{
+		auto PlayerController = Cast<APlayerController>(GetController());
+		DisableInput(PlayerController);
+	}
 }
 
 // Called every frame
