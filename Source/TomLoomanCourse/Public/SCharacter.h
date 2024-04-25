@@ -41,6 +41,9 @@ protected:
 	TSubclassOf<AActor> PrimaryAbilityProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	UParticleSystem* CastPrimaryAbilityParticleEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> SecondaryAbilityProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")

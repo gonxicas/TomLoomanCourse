@@ -17,11 +17,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage;
 
-	UPROPERTY(EditAnywhere, Category = "Particles")
+	UPROPERTY(EditAnywhere, Category = "Effects")
 	UParticleSystem* ImpactParticleEffect;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	TSubclassOf<UCameraShakeBase> ImpactCameraShakeBase;
 
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	float ImpactCameraShakeInnerRadius;
+
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	float ImpactCameraShakeOuterRadius;
+	
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	USoundBase* ImpactSound;
 

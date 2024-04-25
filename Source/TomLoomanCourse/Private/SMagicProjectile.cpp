@@ -20,16 +20,16 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	auto AttributeComponent = Cast<USAttributeComponent>(
 		OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 
-	if(!AttributeComponent) return;
-	
+	if (!AttributeComponent) return;
+
 	AttributeComponent->ApplyHealthChange(-Damage);
 	ActivateImpactParticleEffect();
-	
 }
 
 void ASMagicProjectile::ActivateImpactParticleEffect()
 {
-	
+	UGameplayStatics::PlayWorldCameraShake(GetWorld(), ImpactCameraShakeBase, GetActorLocation(),
+	                                       ImpactCameraShakeInnerRadius, ImpactCameraShakeOuterRadius);
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticleEffect, GetActorLocation(), GetActorRotation());
 	Destroy();
@@ -39,7 +39,7 @@ void ASMagicProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor
                                        UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::OnComponentHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
-	
+
 	if (!ensure(OtherActor) || OtherActor == GetInstigator()) return;
 
 	ActivateImpactParticleEffect();

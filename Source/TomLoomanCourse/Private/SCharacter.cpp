@@ -12,6 +12,7 @@
 #include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -101,7 +102,7 @@ void ASCharacter::Test()
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
-
+	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
 	                                       &ASCharacter::PrimaryAttackTimeElapsed, .2f);
 }
@@ -152,7 +153,9 @@ void ASCharacter::SpawnProjectile(UClass* Object, const FVector& From)
 
 void ASCharacter::PrimaryAttackTimeElapsed()
 {
-	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const auto HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const auto HandRotation = GetMesh()->GetSocketRotation("Muzzle_01");
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CastPrimaryAbilityParticleEffect, HandLocation, HandRotation );
 	SpawnProjectile(PrimaryAttackProjectileClass, HandLocation);
 	
 }
@@ -167,7 +170,7 @@ void ASCharacter::PrimaryAbility()
 
 void ASCharacter::PrimaryAbilityTimeElapsed()
 {
-	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const auto HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	SpawnProjectile(PrimaryAbilityProjectileClass, HandLocation);
 }
 
