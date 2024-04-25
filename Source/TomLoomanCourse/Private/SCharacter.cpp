@@ -74,6 +74,12 @@ void ASCharacter::Look(const FInputActionValue& ActionValue)
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth,
 	float Delta)
 {
+
+	if(Delta < .0f && NewHealth > .0f)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+	}
+	
 	if(NewHealth <= .0f && Delta < .0f)
 	{
 		auto PlayerController = Cast<APlayerController>(GetController());
