@@ -2,6 +2,8 @@
 
 #include "SAttributeComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -21,7 +23,26 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	if(!AttributeComponent) return;
 	
 	AttributeComponent->ApplyHealthChange(-Damage);
+	ActivateImpactParticleEffect();
+	
+}
+
+void ASMagicProjectile::ActivateImpactParticleEffect()
+{
+	
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticleEffect, GetActorLocation(), GetActorRotation());
 	Destroy();
+}
+
+void ASMagicProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+                                       UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::OnComponentHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+	
+	if (!ensure(OtherActor) || OtherActor == GetInstigator()) return;
+
+	ActivateImpactParticleEffect();
 }
 
 void ASMagicProjectile::PostInitializeComponents()
