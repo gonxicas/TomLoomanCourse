@@ -1,4 +1,3 @@
-
 #include "SAttributeComponent.h"
 
 USAttributeComponent::USAttributeComponent()
@@ -14,17 +13,17 @@ void USAttributeComponent::BeginPlay()
 	Health = MaxHealth;
 }
 
-bool USAttributeComponent::IsAlive() const
-{
-	return Health > 0.f;
-}
-
 bool USAttributeComponent::ApplyHealthChange(const float Delta)
 {
 	Health += Delta;
 	Health = FMath::Clamp(Health ,.0f, MaxHealth);
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 	return true; 
+}
+
+bool USAttributeComponent::HasMaxHealth() const
+{
+	return FMath::IsNearlyEqual(Health, MaxHealth);
 }
 
  

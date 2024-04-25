@@ -29,8 +29,11 @@ public:
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsAlive() const;
+	bool IsAlive() const {return Health > 0.f;}
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(float Delta);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool HasMaxHealth() const;
 };
