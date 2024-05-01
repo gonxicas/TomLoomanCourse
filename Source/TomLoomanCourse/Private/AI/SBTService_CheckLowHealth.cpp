@@ -24,9 +24,9 @@ void USBTService_CheckLowHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		return;
 	}
 
-	ACharacter* MyPawn = Cast<ACharacter>(MyController->GetPawn());
+	APawn* MyPawn =MyController->GetPawn();
 
-	if (!MyPawn)
+	if (!ensure(MyPawn))
 	{
 		return;
 	}
