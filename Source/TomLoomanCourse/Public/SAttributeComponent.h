@@ -36,4 +36,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool HasMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool HealToMaxHealth();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetCurrentHealthPercentage() const {return Health / MaxHealth;}
 };

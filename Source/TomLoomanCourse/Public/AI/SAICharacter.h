@@ -5,6 +5,7 @@
 #include "SAICharacter.generated.h"
 
 
+class USAttributeComponent;
 class UPawnSensingComponent;
 
 UCLASS()
@@ -18,6 +19,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	USAttributeComponent* AttributeComponent;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

@@ -26,4 +26,9 @@ bool USAttributeComponent::HasMaxHealth() const
 	return FMath::IsNearlyEqual(Health, MaxHealth);
 }
 
+bool USAttributeComponent::HealToMaxHealth()
+{
+	return ApplyHealthChange(MaxHealth - Health);
+}
+
  
