@@ -15,10 +15,13 @@ void USAttributeComponent::BeginPlay()
 
 bool USAttributeComponent::ApplyHealthChange(const float Delta)
 {
-	Health += Delta;
-	Health = FMath::Clamp(Health ,.0f, MaxHealth);
+	float OldHealth = Health;
+	Health = FMath::Clamp(Health + Delta ,.0f, MaxHealth);
+	
+	float ActualDelta = Health - OldHealth;
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
-	return true; 
+	
+	return ActualDelta != 0; 
 }
 
 bool USAttributeComponent::HasMaxHealth() const

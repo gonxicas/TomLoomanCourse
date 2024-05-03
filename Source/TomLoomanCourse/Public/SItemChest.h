@@ -15,7 +15,6 @@ class TOMLOOMANCOURSE_API ASItemChest : public AActor, public ISGameplayInterfac
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	void Interact_Implementation(APawn* InstigatorPawn);
 	ASItemChest();
 
@@ -29,12 +28,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };
