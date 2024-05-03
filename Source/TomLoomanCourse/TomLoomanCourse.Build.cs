@@ -14,7 +14,7 @@ public class TomLoomanCourse : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"EnhancedInput"
+			"EnhancedInput", "AIModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
