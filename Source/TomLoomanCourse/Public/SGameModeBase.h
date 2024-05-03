@@ -37,6 +37,7 @@ protected:
 	TSubclassOf<AActor> MinionClass;
 
 	virtual void StartPlay() override;
+	bool HasRechedMaximumBotCapacity();
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
