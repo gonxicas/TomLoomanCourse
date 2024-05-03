@@ -22,7 +22,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	if (!AttributeComponent) return;
 
-	AttributeComponent->ApplyHealthChange(-Damage);
+	AttributeComponent->ApplyHealthChange(GetInstigator(), -Damage);
 	ActivateImpactParticleEffect();
 }
 

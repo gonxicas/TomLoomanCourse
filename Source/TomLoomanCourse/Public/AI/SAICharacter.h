@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
@@ -23,12 +24,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Attributes")
 	USAttributeComponent* AttributeComponent;
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	FBlackboardKeySelector HasReceivedAttackFromPlayerKey;
+	
+
+	virtual void PostInitializeComponents() override;
+	
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
 
+	void SetTargetActor(AActor* NewTarget);
 	
-	virtual void PostInitializeComponents() override;
 };

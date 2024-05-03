@@ -32,13 +32,13 @@ public:
 	bool IsAlive() const {return Health > 0.f;}
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool HasMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool HealToMaxHealth();
+	bool HealToMaxHealth(AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetCurrentHealthPercentage() const {return Health / MaxHealth;}

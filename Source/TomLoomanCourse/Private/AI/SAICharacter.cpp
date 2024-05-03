@@ -15,18 +15,18 @@ ASAICharacter::ASAICharacter()
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 }
 
+void ASAICharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
+
+	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
+}
+
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	AAIController* AIController = Cast<AAIController>(GetController());
-
-	if (!AIController)
-	{
-		return;
-	}
-
-	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
-	BlackboardComponent->SetValueAsObject("TargetACtor", Pawn);
-
+	SetTargetActor(Pawn);
 	DrawDebugString(GetWorld(), GetActorLocation(), TEXT("Player Spotted"),
 	                nullptr, FColor::White, 4.0f, true);
 }
@@ -37,6 +37,13 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 	if (Delta >= .0f)
 	{
 		return;
+	}
+
+	if(InstigatorActor != this)
+	{
+		AAIController* MyAIController = Cast<AAIController>(GetController());
+		MyAIController->GetBlackboardComponent()->SetValueAsBool(TEXT("HasReceivedAttackFromPlayer"), true);
+		SetTargetActor(InstigatorActor);
 	}
 
 	if (NewHealth > .0f)
@@ -56,11 +63,16 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 	SetLifeSpan(10.f);
 }
 
-void ASAICharacter::PostInitializeComponents()
+void ASAICharacter::SetTargetActor(AActor* NewTarget)
 {
-	Super::PostInitializeComponents();
+	AAIController* AIController = Cast<AAIController>(GetController());
 
-	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
+	if (!AIController)
+	{
+		return;
+	}
 
-	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
+	AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NewTarget);
+	
+
 }

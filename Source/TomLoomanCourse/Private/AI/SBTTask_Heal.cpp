@@ -30,6 +30,6 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 		return EBTNodeResult::Failed;
 	}
 
-	MyAttributeComponent->HealToMaxHealth();
+	MyAttributeComponent->HealToMaxHealth(MyPawn);
 	return EBTNodeResult::Succeeded;
 }

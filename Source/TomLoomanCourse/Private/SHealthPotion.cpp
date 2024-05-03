@@ -30,7 +30,7 @@ void ASHealthPotion::InteractAction(APawn* InstigatorPawn)
 
 	if(!AttributeComponent) return;
 	
-	AttributeComponent->ApplyHealthChange(HealthRestored);
+	AttributeComponent->ApplyHealthChange(this, HealthRestored);
 	
 	
 }
