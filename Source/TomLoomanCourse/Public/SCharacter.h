@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	FName TimeToHitParamName;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Interaction")
 	USInteractionComponent* InteractionComponent;
 
@@ -77,6 +80,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_PrimaryInteract;
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

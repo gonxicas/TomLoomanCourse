@@ -13,6 +13,7 @@ ASAICharacter::ASAICharacter()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
+	TimeToHitParamName = "TimeToHit";
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -39,6 +40,7 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 		return;
 	}
 
+	GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 	if(InstigatorActor != this)
 	{
 		AAIController* MyAIController = Cast<AAIController>(GetController());

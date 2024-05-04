@@ -34,6 +34,8 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
+
+	TimeToHitParamName = "TimeToHit";
 }
 
 // Called when the game starts or when spawned
@@ -78,7 +80,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 
 	if(Delta < .0f && NewHealth > .0f)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 	}
 	
 	if(NewHealth <= .0f && Delta < .0f)
