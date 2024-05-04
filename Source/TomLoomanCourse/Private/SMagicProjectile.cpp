@@ -17,8 +17,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (!ensure(OtherActor) || OtherActor == GetInstigator()) return;
 
-	auto AttributeComponent = Cast<USAttributeComponent>(
-		OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+	auto AttributeComponent = USAttributeComponent::GetAttributes(OtherActor);
 
 	if (!AttributeComponent) return;
 

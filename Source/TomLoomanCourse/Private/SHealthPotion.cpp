@@ -17,16 +17,14 @@ ASHealthPotion::ASHealthPotion()
 
 bool ASHealthPotion::InteractPrecondition(APawn* InstigatorPawn) const
 {
-	const auto AttributeComponent = Cast<USAttributeComponent>(
-		InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+	const auto AttributeComponent = USAttributeComponent::GetAttributes(InstigatorPawn);
 
 	return AttributeComponent && !AttributeComponent->HasMaxHealth();
 }
 
 void ASHealthPotion::InteractAction(APawn* InstigatorPawn)
 {
-	auto AttributeComponent = Cast<USAttributeComponent>(
-		InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+	auto AttributeComponent = USAttributeComponent::GetAttributes(InstigatorPawn);
 
 	if(!AttributeComponent) return;
 	

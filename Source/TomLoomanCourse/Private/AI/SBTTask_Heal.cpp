@@ -22,8 +22,7 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 		return EBTNodeResult::Failed;
 	}
 
-	USAttributeComponent* MyAttributeComponent = Cast<USAttributeComponent>(
-		MyPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+	USAttributeComponent* MyAttributeComponent = USAttributeComponent::GetAttributes(MyPawn);
 
 	if(!ensureMsgf(MyAttributeComponent, TEXT("Trying to execute SBT_TaskHealth but the AttributeComponent was not found.")))
 	{

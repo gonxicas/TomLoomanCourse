@@ -6,7 +6,6 @@ USAttributeComponent::USAttributeComponent()
 	Health = MaxHealth;
 }
 
-
 void USAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -33,5 +32,27 @@ bool USAttributeComponent::HealToMaxHealth(AActor* InstigatorActor)
 {
 	return ApplyHealthChange(InstigatorActor, MaxHealth - Health);
 }
+
+USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if(!FromActor)
+	{
+		return nullptr;
+	}
+
+	return FromActor->FindComponentByClass<USAttributeComponent>();
+}
+
+bool USAttributeComponent::IsActorAlive(AActor* Actor)
+{
+	USAttributeComponent* AttributeComponent = GetAttributes(Actor);
+	if(!AttributeComponent)
+	{
+		return false;
+	}
+
+	return AttributeComponent->IsAlive();
+}	
+
 
  
