@@ -3,7 +3,9 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "SAttributeComponent.h"
+#include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Perception/PawnSensingComponent.h"
 
 
@@ -38,6 +40,17 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 	if (Delta >= .0f)
 	{
 		return;
+	}
+
+	if(!ActiveHealthBar)
+	{
+		ActiveHealthBar = CreateWidget<USWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
+	}
+
+	if(ActiveHealthBar)
+	{
+		ActiveHealthBar->SetAttachedActor(this);
+		ActiveHealthBar->AddToViewport();
 	}
 
 	GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
