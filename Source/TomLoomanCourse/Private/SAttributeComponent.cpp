@@ -2,6 +2,10 @@
 
 #include "SGameModeBase.h"
 
+static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"), 1.0f,
+                                                        TEXT("Global Damage Modifier for Attribute Component."),
+                                                        ECVF_Cheat);
+
 USAttributeComponent::USAttributeComponent()
 {
 	MaxHealth = 120;
@@ -14,30 +18,35 @@ void USAttributeComponent::BeginPlay()
 	Health = MaxHealth;
 }
 
-bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, const float Delta)
+bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
-	if(!GetOwner()->CanBeDamaged())
+	
+	if (!GetOwner()->CanBeDamaged())
 	{
 		return false;
 	}
-	
+
+	if(Delta < .0f)
+	{
+		Delta *= CVarDamageMultiplier.GetValueOnGameThread();
+	}
 	float OldHealth = Health;
-	Health = FMath::Clamp(Health + Delta ,.0f, MaxHealth);
-	
+	Health = FMath::Clamp(Health + Delta, .0f, MaxHealth);
+
 	float ActualDelta = Health - OldHealth;
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
 
-	if(ActualDelta < .0f && Health == .0f)
+	if (ActualDelta < .0f && Health == .0f)
 	{
 		ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
 
-		if(GameMode)
+		if (GameMode)
 		{
 			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
 		}
 	}
-	
-	return ActualDelta != 0; 
+
+	return ActualDelta != 0;
 }
 
 bool USAttributeComponent::HasMaxHealth() const
@@ -52,12 +61,12 @@ bool USAttributeComponent::HealToMaxHealth(AActor* InstigatorActor)
 
 bool USAttributeComponent::Kill(AActor* InstigatorActor)
 {
-	return  ApplyHealthChange(InstigatorActor, -MaxHealth);
+	return ApplyHealthChange(InstigatorActor, -MaxHealth);
 }
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
 {
-	if(!FromActor)
+	if (!FromActor)
 	{
 		return nullptr;
 	}
@@ -68,13 +77,10 @@ USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
 bool USAttributeComponent::IsActorAlive(AActor* Actor)
 {
 	USAttributeComponent* AttributeComponent = GetAttributes(Actor);
-	if(!AttributeComponent)
+	if (!AttributeComponent)
 	{
 		return false;
 	}
 
 	return AttributeComponent->IsAlive();
-}	
-
-
- 
+}

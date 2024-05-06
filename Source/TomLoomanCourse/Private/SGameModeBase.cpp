@@ -6,6 +6,9 @@
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true,
+                                                TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
+
 ASGameModeBase::ASGameModeBase()
 {
 }
@@ -47,6 +50,11 @@ bool ASGameModeBase::HasRechedMaximumBotCapacity()
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
+	if(!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bot spawning disabled via cvar 'CVarSpawnBots'."));
+		return;
+	}
 	if (HasRechedMaximumBotCapacity())
 	{
 		return;
@@ -86,7 +94,7 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 
 void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 {
-	if(!ensure(Controller))
+	if (!ensure(Controller))
 	{
 		return;
 	}

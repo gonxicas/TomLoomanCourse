@@ -14,6 +14,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+static TAutoConsoleVariable<bool> CVarDebugDrawInteractions(TEXT("su.DrawDebugAttack"), false,
+                                                            TEXT("Enable debug lines for Character Attack."),
+                                                            ECVF_Cheat);
+
 // Sets default values
 ASCharacter::ASCharacter()
 {
@@ -75,15 +79,14 @@ void ASCharacter::Look(const FInputActionValue& ActionValue)
 }
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth,
-	float Delta)
+                                  float Delta)
 {
-
-	if(Delta < .0f && NewHealth > .0f)
+	if (Delta < .0f && NewHealth > .0f)
 	{
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 	}
-	
-	if(NewHealth <= .0f && Delta < .0f)
+
+	if (NewHealth <= .0f && Delta < .0f)
 	{
 		auto PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
@@ -104,40 +107,43 @@ void ASCharacter::Test()
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
-	
+
 	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
 	                                       &ASCharacter::PrimaryAttackTimeElapsed, .2f);
 }
 
-void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation, UE::Math::TRotator<double>& ProjectileRotation) const
+void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation,
+                                                UE::Math::TRotator<double>& ProjectileRotation) const
 {
 	const auto CameraLocation = CameraComponent->GetComponentLocation();
 	const auto CameraRotation = CameraComponent->GetComponentRotation();
+	bool bDebugDraw = CVarDebugDrawInteractions.GetValueOnGameThread();
 
 
 	FHitResult Hit;
 	auto End = CameraLocation + CameraRotation.Vector() * 10000;
-	
+
 	FCollisionObjectQueryParams QueryParams;
 	FCollisionQueryParams Test;
 	Test.AddIgnoredActor(this);
 	QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	QueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
 	QueryParams.AddObjectTypesToQuery(ECC_Pawn);
-	
 
 
 	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams, Test);
-	
+
 	auto TargetPoint = BlockHit ? Hit.ImpactPoint : End;
 	ProjectileRotation = FRotationMatrix::MakeFromX(TargetPoint - HandLocation).Rotator();
 
-
-	DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
-	              false, 2.f, 0, 2.f);
-	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
-	DrawDebugLine(GetWorld(), HandLocation, TargetPoint, FColor::Green,
-	              false, 2.f, 0, 2.f);
+	if (bDebugDraw)
+	{
+		DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
+		              false, 2.f, 0, 2.f);
+		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
+		DrawDebugLine(GetWorld(), HandLocation, TargetPoint, FColor::Green,
+		              false, 2.f, 0, 2.f);
+	}
 }
 
 void ASCharacter::SpawnProjectile(UClass* Object, const FVector& From)
@@ -149,7 +155,7 @@ void ASCharacter::SpawnProjectile(UClass* Object, const FVector& From)
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
-	
+
 	GetWorld()->SpawnActor<AActor>(Object, SpawnTransformMatrix, SpawnParameters);
 }
 
@@ -157,9 +163,8 @@ void ASCharacter::PrimaryAttackTimeElapsed()
 {
 	const auto HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	const auto HandRotation = GetMesh()->GetSocketRotation("Muzzle_01");
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CastPrimaryAbilityParticleEffect, HandLocation, HandRotation );
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CastPrimaryAbilityParticleEffect, HandLocation, HandRotation);
 	SpawnProjectile(PrimaryAttackProjectileClass, HandLocation);
-	
 }
 
 void ASCharacter::PrimaryAbility()
@@ -167,7 +172,7 @@ void ASCharacter::PrimaryAbility()
 	PlayAnimMontage(AttackAnim);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
-										   &ASCharacter::PrimaryAbilityTimeElapsed, .2f);
+	                                       &ASCharacter::PrimaryAbilityTimeElapsed, .2f);
 }
 
 void ASCharacter::PrimaryAbilityTimeElapsed()
@@ -181,7 +186,7 @@ void ASCharacter::SecondaryAbility()
 	PlayAnimMontage(AttackAnim);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
-										   &ASCharacter::SecondaryAbilityTimeElapsed, .2f);
+	                                       &ASCharacter::SecondaryAbilityTimeElapsed, .2f);
 }
 
 void ASCharacter::SecondaryAbilityTimeElapsed()
