@@ -2,6 +2,7 @@
 
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
+#include "SCharacter.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
@@ -33,7 +34,7 @@ bool ASGameModeBase::HasRechedMaximumBotCapacity()
 
 	UE_LOG(LogTemp, Log, TEXT("Found %i alive bots."), NumberOfAliveBots);
 	float MaxBotCount = 10.f;
-	if(DifficultyFloat)
+	if (DifficultyFloat)
 	{
 		MaxBotCount = DifficultyFloat->GetFloatValue(GetWorld()->TimeSeconds);
 	}
@@ -50,7 +51,7 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	{
 		return;
 	}
-	
+
 	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(
 		this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct,
 		nullptr);
@@ -81,6 +82,39 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	}
 
 	GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+}
+
+void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if(!ensure(Controller))
+	{
+		return;
+	}
+
+	Controller->UnPossess();
+
+	RestartPlayer(Controller);
+}
+
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
+	if (!Player)
+	{
+		return;
+	}
+
+	FTimerHandle TimerHandle_RespawnDelay;
+
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+
+
+	SpawnDelay = 2.0f;
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, SpawnDelay, false);
+
+	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor),
+	       *GetNameSafe(Killer));
 }
 
 void ASGameModeBase::KillAll()
