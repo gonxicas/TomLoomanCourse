@@ -1,6 +1,7 @@
 #include "SMagicProjectile.h"
 
 #include "SAttributeComponent.h"
+#include "SGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -17,11 +18,11 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (!ensure(OtherActor) || OtherActor == GetInstigator()) return;
 
-	auto AttributeComponent = USAttributeComponent::GetAttributes(OtherActor);
+	if(!USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
+	{
+		return;
+	}
 
-	if (!AttributeComponent) return;
-
-	AttributeComponent->ApplyHealthChange(GetInstigator(), -Damage);
 	ActivateImpactParticleEffect();
 }
 

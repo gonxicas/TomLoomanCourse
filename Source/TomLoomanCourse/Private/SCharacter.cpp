@@ -14,7 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-static TAutoConsoleVariable<bool> CVarDebugDrawInteractions(TEXT("su.DrawDebugAttack"), false,
+static TAutoConsoleVariable<bool> CVarDebugDrawAttack(TEXT("su.DrawDebugAttack"), false,
                                                             TEXT("Enable debug lines for Character Attack."),
                                                             ECVF_Cheat);
 
@@ -117,7 +117,7 @@ void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation,
 {
 	const auto CameraLocation = CameraComponent->GetComponentLocation();
 	const auto CameraRotation = CameraComponent->GetComponentRotation();
-	bool bDebugDraw = CVarDebugDrawInteractions.GetValueOnGameThread();
+	bool bDebugDraw = CVarDebugDrawAttack.GetValueOnGameThread();
 
 
 	FHitResult Hit;
@@ -225,6 +225,11 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Input->BindAction(Input_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 
 	Input->BindAction(Input_PrimaryInteract, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryInteract);
+}
+
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	return CameraComponent->GetComponentLocation();
 }
 
 void ASCharacter::HealSelf(float Amount)
