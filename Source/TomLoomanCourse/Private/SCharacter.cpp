@@ -221,3 +221,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	Input->BindAction(Input_PrimaryInteract, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryInteract);
 }
+
+void ASCharacter::HealSelf(float Amount)
+{
+	AttributeComponent->ApplyHealthChange(this, Amount);
+}

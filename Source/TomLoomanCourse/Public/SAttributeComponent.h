@@ -48,4 +48,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetCurrentHealthPercentage() const {return Health / MaxHealth;}
+
+	bool Kill(AActor* InstigatorActor);
 };
