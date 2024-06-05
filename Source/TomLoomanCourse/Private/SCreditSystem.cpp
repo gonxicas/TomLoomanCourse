@@ -4,9 +4,9 @@ ASCreditSystem::ASCreditSystem() : CurrentCredits(0)
 {
 }
 
-bool ASCreditSystem::ModifyCredits(float CreditsToAdd)
+bool ASCreditSystem::ModifyCredits(int CreditsToAdd)
 {
-	if(CurrentCredits + CreditsToAdd < 0)
+	if (!HasEnoughCredits(-CreditsToAdd))
 	{
 		return false;
 	}
@@ -16,4 +16,9 @@ bool ASCreditSystem::ModifyCredits(float CreditsToAdd)
 	OnCreditsChanged.Broadcast(CurrentCredits, CreditsToAdd);
 
 	return true;
+}
+
+bool ASCreditSystem::HasEnoughCredits(int CreditsToSpend) const
+{
+	return CurrentCredits - CreditsToSpend >= 0;
 }

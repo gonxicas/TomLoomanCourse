@@ -17,10 +17,19 @@ class TOMLOOMANCOURSE_API ASHealthPotion : public ASPickUpTemplate
 public:	
 	// Sets default values for this actor's properties
 	ASHealthPotion();
+	bool HasEnoughCredits(APawn* InstigatorPawn) const;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	float HealthRestored;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	int Cost;
+
+	
 	
 protected:
 	// Called when the game starts or when spawned

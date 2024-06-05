@@ -29,5 +29,8 @@ public:
 	int GetCurrentCredits() const {return CurrentCredits;}
 
 	UFUNCTION(BlueprintCallable)
-	bool ModifyCredits(float CreditsToAdd);
+	bool ModifyCredits(int CreditsToAdd);
+
+	UFUNCTION(BlueprintCallable)
+	bool HasEnoughCredits(int CreditsToSpend) const;
 };

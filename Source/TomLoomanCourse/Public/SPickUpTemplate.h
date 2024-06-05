@@ -23,9 +23,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "PickUp")
 	float DelayTime;
 
-	UPROPERTY(EditAnywhere, Category = "PickUp")
-	float HealthRestored;
-
 	FTimerHandle ResetPickupHandle;
 	
 protected:
