@@ -3,6 +3,7 @@
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SCreditSystem.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
@@ -21,7 +22,7 @@ void ASGameModeBase::StartPlay()
 	                                SpawnTimerInterval, true);
 }
 
-bool ASGameModeBase::HasRechedMaximumBotCapacity()
+bool ASGameModeBase::HasReachedMaximumBotCapacity()
 {
 	int32 NumberOfAliveBots = 0;
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
@@ -50,12 +51,12 @@ bool ASGameModeBase::HasRechedMaximumBotCapacity()
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
-	if(!CVarSpawnBots.GetValueOnGameThread())
+	if (!CVarSpawnBots.GetValueOnGameThread())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bot spawning disabled via cvar 'CVarSpawnBots'."));
 		return;
 	}
-	if (HasRechedMaximumBotCapacity())
+	if (HasReachedMaximumBotCapacity())
 	{
 		return;
 	}
@@ -104,14 +105,8 @@ void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 	RestartPlayer(Controller);
 }
 
-void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+void ASGameModeBase::RespawnPlayer(AActor* VictimActor, AActor* Killer, ASCharacter* Player)
 {
-	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
-	if (!Player)
-	{
-		return;
-	}
-
 	FTimerHandle TimerHandle_RespawnDelay;
 
 	FTimerDelegate Delegate;
@@ -123,6 +118,35 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor),
 	       *GetNameSafe(Killer));
+}
+
+void ASGameModeBase::GiveCreditsToPlayer(const ASCharacter* Player) const
+{
+	ASCreditSystem* CreditSystem = Cast<ASCreditSystem>(Player->GetPlayerState());
+	if (!CreditSystem)
+	{
+		return ;
+	}
+	CreditSystem->ModifyCredits(CreditsPerKill);
+}
+
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
+	if (Player)
+	{
+		RespawnPlayer(VictimActor, Killer, Player);
+		return;
+	}
+
+	ASAICharacter* Bot = Cast<ASAICharacter>(VictimActor);
+	Player = Cast<ASCharacter>(Killer);
+	if (!Bot || !Player)
+	{
+		GiveCreditsToPlayer(Player);
+	}
+	
+	
 }
 
 void ASGameModeBase::KillAll()

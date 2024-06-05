@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SCharacter.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "SGameModeBase.generated.h"
@@ -38,8 +39,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Game Mode")
 	float SpawnDelay;
 
+	UPROPERTY(EditAnywhere, Category = "Credits")
+	int CreditsPerKill = 10;
+
 	virtual void StartPlay() override;
-	bool HasRechedMaximumBotCapacity();
+	bool HasReachedMaximumBotCapacity();
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
@@ -48,6 +52,8 @@ protected:
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
+	void RespawnPlayer(AActor* VictimActor, AActor* Killer, ASCharacter* Player);
+	void GiveCreditsToPlayer(const ASCharacter* Player) const;
 
 public:
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
