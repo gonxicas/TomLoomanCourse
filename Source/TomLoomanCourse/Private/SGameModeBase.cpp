@@ -141,7 +141,7 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 
 	ASAICharacter* Bot = Cast<ASAICharacter>(VictimActor);
 	Player = Cast<ASCharacter>(Killer);
-	if (!Bot || !Player)
+	if (Bot && Player)
 	{
 		GiveCreditsToPlayer(Player);
 	}

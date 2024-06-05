@@ -13,7 +13,7 @@ bool ASCreditSystem::ModifyCredits(float CreditsToAdd)
 
 	CurrentCredits += CreditsToAdd;
 
-	OnCreditsChanged.Broadcast(CreditsToAdd);
+	OnCreditsChanged.Broadcast(CurrentCredits, CreditsToAdd);
 
 	return true;
 }

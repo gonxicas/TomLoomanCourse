@@ -4,8 +4,8 @@
 #include "GameFramework/PlayerState.h"
 #include "SCreditSystem.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnCreditsChanged, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnCreditsChanged, float, NewCredits, float, Delta);
 
 UCLASS()
 class TOMLOOMANCOURSE_API ASCreditSystem : public APlayerState
