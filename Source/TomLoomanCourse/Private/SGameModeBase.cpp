@@ -4,6 +4,7 @@
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
 #include "SCreditSystem.h"
+#include "SPickUpTemplate.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
@@ -20,6 +21,19 @@ void ASGameModeBase::StartPlay()
 
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed,
 	                                SpawnTimerInterval, true);
+	if (!ensure(PickUpSpawnQuery) || !ensure(PickUpClasses.Num() > 0))
+	{
+		return;
+	}
+
+	UEnvQueryInstanceBlueprintWrapper* PickUpQueryInstance = UEnvQueryManager::RunEQSQuery(
+		this, PickUpSpawnQuery, this, EEnvQueryRunMode::AllMatching, nullptr);
+	if (!PickUpQueryInstance)
+	{
+		return;
+	}
+
+	PickUpQueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &ASGameModeBase::ASGameModeBase::OnPowerUpQueryCompleted);
 }
 
 bool ASGameModeBase::HasReachedMaximumBotCapacity()
@@ -93,6 +107,59 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
 }
 
+void ASGameModeBase::OnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
+                                             EEnvQueryStatus::Type QueryStatus)
+{
+	if (QueryStatus != EEnvQueryStatus::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PickUP EQS Query Failed!"));
+		return;
+	}
+	TArray<FVector> Locations;
+	QueryInstance->GetQueryResultsAsLocations(Locations);
+
+	TArray<FVector> UsedLocations;
+
+	if (Locations.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PickUP EQS Query returned 0 locations!"));
+		return;
+	}
+
+	int NumberOfPickUpSpawned = 0;
+	while (Locations.Num() > 0 && NumberOfPickUpSpawned < NumberOfPickUps)
+	{
+		int LocationIndex = FMath::RandRange(0, Locations.Num() - 1);
+		FVector CurrentLocation = Locations[LocationIndex];
+		Locations.RemoveAt(LocationIndex);
+
+		bool bIsValidLocation = true;
+		for (FVector UsedLocation : UsedLocations)
+		{
+			float Distance = (UsedLocation - CurrentLocation).Size();
+			
+			if(Distance < MinimumDistanceAmongPickUps)
+			{
+				bIsValidLocation = false;
+				break;
+			}
+		}
+		
+		if(!bIsValidLocation)
+		{
+			continue;
+		}
+
+		int PickUpIndex = FMath::RandRange(0, PickUpClasses.Num() - 1);
+
+		TSubclassOf<ASPickUpTemplate> PickUp = PickUpClasses[PickUpIndex];
+
+		GetWorld()->SpawnActor<ASPickUpTemplate>(PickUp, CurrentLocation, FRotator::ZeroRotator);
+		UsedLocations.Add(CurrentLocation);
+		NumberOfPickUpSpawned++;
+	}
+}
+
 void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 {
 	if (!ensure(Controller))
@@ -125,7 +192,7 @@ void ASGameModeBase::GiveCreditsToPlayer(const ASCharacter* Player) const
 	ASCreditSystem* CreditSystem = Cast<ASCreditSystem>(Player->GetPlayerState());
 	if (!CreditSystem)
 	{
-		return ;
+		return;
 	}
 	CreditSystem->ModifyCredits(CreditsPerKill);
 }
@@ -145,8 +212,6 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 	{
 		GiveCreditsToPlayer(Player);
 	}
-	
-	
 }
 
 void ASGameModeBase::KillAll()

@@ -7,6 +7,7 @@
 #include "SGameModeBase.generated.h"
 
 
+class ASPickUpTemplate;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
@@ -42,6 +43,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Credits")
 	int CreditsPerKill = 10;
 
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	UEnvQuery* PickUpSpawnQuery;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	TArray<TSubclassOf<ASPickUpTemplate>> PickUpClasses;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	int NumberOfPickUps = 3;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	float MinimumDistanceAmongPickUps = 300.f;
+	
 	virtual void StartPlay() override;
 	bool HasReachedMaximumBotCapacity();
 
@@ -49,6 +62,9 @@ protected:
 	void SpawnBotTimerElapsed();
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void OnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
