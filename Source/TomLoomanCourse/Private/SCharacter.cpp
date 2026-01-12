@@ -162,6 +162,16 @@ void ASCharacter::SpawnProjectile(UClass* Object, const FVector& From)
 	GetWorld()->SpawnActor<AActor>(Object, SpawnTransformMatrix, SpawnParameters);
 }
 
+void ASCharacter::SprintStart()
+{
+	ActionComponent->StartAction(this, "Sprint");
+}
+
+void ASCharacter::SprintStop()
+{
+	ActionComponent->StopAction(this, "Sprint");
+}
+
 void ASCharacter::PrimaryAttackTimeElapsed()
 {
 	const auto HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
@@ -228,6 +238,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Input->BindAction(Input_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 
 	Input->BindAction(Input_PrimaryInteract, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryInteract);
+
+	Input->BindAction(Input_PrimaryStartSprint, ETriggerEvent::Triggered, this, &ASCharacter::SprintStart);
+	Input->BindAction(Input_PrimaryStopSprint, ETriggerEvent::Triggered, this, &ASCharacter::SprintStop);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const

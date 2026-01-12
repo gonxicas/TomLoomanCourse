@@ -85,6 +85,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* Input_PrimaryInteract;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_PrimaryStartSprint;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* Input_PrimaryStopSprint;
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -111,6 +117,9 @@ public:
 	void PrimaryInteract();
 	void PrimaryAbility();
 	void SpawnProjectile(UClass* Object, const FVector& From);
+	void SprintStart();
+	void SprintStop();
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
