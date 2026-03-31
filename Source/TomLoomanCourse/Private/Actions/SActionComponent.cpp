@@ -45,6 +45,11 @@ bool USActionComponent::StartAction(AActor* Instigator, FName ActionName)
 {
 	for (USAction* Action : Actions)
 	{
+		if (!Action->CanStart(Instigator))
+		{
+			auto FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *ActionName.ToString());
+			continue;
+		}
 		if (Action && Action->ActionName == ActionName)
 		{
 			Action->StartAction(Instigator);
@@ -61,8 +66,11 @@ bool USActionComponent::StopAction(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			Action->StopAction(Instigator);
-			return true;
+			if (Action->IsRunning())
+			{
+				Action->StopAction(Instigator);
+				return true;
+			}
 		}
 	}
 

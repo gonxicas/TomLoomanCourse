@@ -18,11 +18,19 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
+	
+	bool bIsRunning;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	USActionComponent* GetActionComponent() const;
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Action")
+	bool IsRunning() const {return bIsRunning;}
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Action")
+	bool CanStart(AActor* Instigator) const;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	FName ActionName;
 
