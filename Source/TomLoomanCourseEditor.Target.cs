@@ -8,7 +8,7 @@ public class TomLoomanCourseEditorTarget : TargetRules
 	public TomLoomanCourseEditorTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V4;
+		DefaultBuildSettings = BuildSettingsVersion.V6;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 		ExtraModuleNames.Add("TomLoomanCourse");
 	}

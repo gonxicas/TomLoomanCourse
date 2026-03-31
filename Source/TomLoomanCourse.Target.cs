@@ -8,7 +8,7 @@ public class TomLoomanCourseTarget : TargetRules
 	public TomLoomanCourseTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V4;
+		DefaultBuildSettings = BuildSettingsVersion.V6;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 		ExtraModuleNames.Add("TomLoomanCourse");
 	}

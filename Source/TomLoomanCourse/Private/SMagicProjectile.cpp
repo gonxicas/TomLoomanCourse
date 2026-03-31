@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Actions/SActionEffect.h"
 
 
 // Sets default values
@@ -29,6 +30,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	if(!USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
 	{
 		return;
+	}
+	
+	if (ActionComponent)
+	{
+		auto instigator = GetInstigator();
+		ActionComponent->AddAction(instigator, BurningActionClass);
 	}
 
 	ActivateImpactParticleEffect();

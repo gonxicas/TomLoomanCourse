@@ -22,9 +22,12 @@ protected:
 	bool bIsRunning;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
-	USActionComponent* GetActionComponent() const;
+	USActionComponent* GetOwningComponent() const;
 
 public:
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	bool bIsAutoStart; 
+	
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool IsRunning() const {return bIsRunning;}
 	

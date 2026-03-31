@@ -7,6 +7,8 @@
 #include "SMagicProjectile.generated.h"
 
 
+class USActionEffect;
+
 UCLASS()
 class TOMLOOMANCOURSE_API ASMagicProjectile : public ASProjectile
 {
@@ -17,8 +19,11 @@ public:
 
 protected:
 	
-	UPROPERTY(EditAnywhere, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	FGameplayTag ParryTag;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	TSubclassOf<USActionEffect> BurningActionClass;
 	
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage;
