@@ -1,10 +1,10 @@
 #include "SMagicProjectile.h"
 
-#include "Actions/SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
+#include "Actions/SActionComponent.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -18,6 +18,14 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (!ensure(OtherActor) || OtherActor == GetInstigator()) return;
 
+	auto ActionComponent = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
+	if (ActionComponent && ActionComponent->ActiveGameplayTags.HasTag(ParryTag))
+	{
+		ProjectileMovementComponent->Velocity = -ProjectileMovementComponent->Velocity;
+		SetInstigator(Cast<APawn>(OtherActor));
+		return;
+	}
+	
 	if(!USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
 	{
 		return;

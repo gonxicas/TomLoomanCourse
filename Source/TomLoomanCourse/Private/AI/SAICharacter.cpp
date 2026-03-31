@@ -4,6 +4,7 @@
 #include "BrainComponent.h"
 #include "Actions/SAttributeComponent.h"
 #include "SWorldUserWidget.h"
+#include "Actions/SActionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
@@ -17,6 +18,7 @@ ASAICharacter::ASAICharacter()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
+	ActionComponent = CreateDefaultSubobject<USActionComponent>("ActionComponent");
 	TimeToHitParamName = "TimeToHit";
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);

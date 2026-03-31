@@ -1,9 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "SProjectile.h"
 #include "GameFramework/Actor.h"
 #include "SMagicProjectile.generated.h"
+
 
 UCLASS()
 class TOMLOOMANCOURSE_API ASMagicProjectile : public ASProjectile
@@ -14,6 +16,10 @@ public:
 	ASMagicProjectile();
 
 protected:
+	
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	FGameplayTag ParryTag;
+	
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage;
 

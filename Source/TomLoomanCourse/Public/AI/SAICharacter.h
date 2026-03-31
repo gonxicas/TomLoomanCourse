@@ -6,6 +6,7 @@
 #include "SAICharacter.generated.h"
 
 
+class USActionComponent;
 class USWorldUserWidget;
 class USAttributeComponent;
 class UPawnSensingComponent;
@@ -22,8 +23,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USAttributeComponent* AttributeComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USActionComponent> ActionComponent;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	FBlackboardKeySelector HasReceivedAttackFromPlayerKey;
@@ -35,6 +39,7 @@ protected:
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	
 	USWorldUserWidget* ActiveHealthBar;
+	
 
 	virtual void PostInitializeComponents() override;
 	
