@@ -1,5 +1,5 @@
-#include "SActionComponent.h"
-#include "SAction.h"
+#include "Actions/SActionComponent.h"
+#include "Actions/SAction.h"
 
 USActionComponent::USActionComponent()
 {
@@ -10,6 +10,11 @@ USActionComponent::USActionComponent()
 void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	for (TSubclassOf<USAction> Action : DefaultActions)
+	{
+		AddAction(Action);
+	}
 }
 
 

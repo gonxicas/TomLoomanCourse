@@ -4,6 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "SAction.generated.h"
 
+class UWorld;
 UCLASS(Blueprintable)
 class TOMLOOMANCOURSE_API USAction : public UObject
 {
@@ -18,5 +19,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StopAction(AActor* Instigator);
+
+	virtual UWorld* GetWorld() const override;
 	
 };

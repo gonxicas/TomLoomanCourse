@@ -1,7 +1,7 @@
 #include "SGameModeBase.h"
 
 #include "EngineUtils.h"
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "SCharacter.h"
 #include "SCreditSystem.h"
 #include "SPickUpTemplate.h"

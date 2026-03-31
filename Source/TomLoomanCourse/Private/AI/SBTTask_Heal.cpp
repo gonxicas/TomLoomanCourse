@@ -3,7 +3,7 @@
 
 #include "AI/SBTTask_Heal.h"
 #include "AIController.h"
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "GameFramework/Character.h"
 
 EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

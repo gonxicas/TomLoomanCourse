@@ -5,24 +5,16 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
-
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "SActionComponent.h"
-#include "SAttributeComponent.h"
+#include "Actions/SActionComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 
-static TAutoConsoleVariable<bool> CVarDebugDrawAttack(TEXT("su.DrawDebugAttack"), false,
-                                                            TEXT("Enable debug lines for Character Attack."),
-                                                            ECVF_Cheat);
-
-// Sets default values
 ASCharacter::ASCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
@@ -45,7 +37,6 @@ ASCharacter::ASCharacter()
 	TimeToHitParamName = "TimeToHit";
 }
 
-// Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -109,57 +100,7 @@ void ASCharacter::Test()
 
 void ASCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
-	                                       &ASCharacter::PrimaryAttackTimeElapsed, .2f);
-}
-
-void ASCharacter::AdjustSpawnRotationWithTarget(const FVector& HandLocation,
-                                                UE::Math::TRotator<double>& ProjectileRotation) const
-{
-	const auto CameraLocation = CameraComponent->GetComponentLocation();
-	const auto CameraRotation = CameraComponent->GetComponentRotation();
-	bool bDebugDraw = CVarDebugDrawAttack.GetValueOnGameThread();
-
-
-	FHitResult Hit;
-	auto End = CameraLocation + CameraRotation.Vector() * 10000;
-
-	FCollisionObjectQueryParams QueryParams;
-	FCollisionQueryParams Test;
-	Test.AddIgnoredActor(this);
-	QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	QueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-	QueryParams.AddObjectTypesToQuery(ECC_Pawn);
-
-
-	auto BlockHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, QueryParams, Test);
-
-	auto TargetPoint = BlockHit ? Hit.ImpactPoint : End;
-	ProjectileRotation = FRotationMatrix::MakeFromX(TargetPoint - HandLocation).Rotator();
-
-	if (bDebugDraw)
-	{
-		DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
-		              false, 2.f, 0, 2.f);
-		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
-		DrawDebugLine(GetWorld(), HandLocation, TargetPoint, FColor::Green,
-		              false, 2.f, 0, 2.f);
-	}
-}
-
-void ASCharacter::SpawnProjectile(UClass* Object, const FVector& From)
-{
-	UE::Math::TRotator<double> ProjectileRotation;
-	AdjustSpawnRotationWithTarget(From, ProjectileRotation);
-
-	const auto SpawnTransformMatrix = FTransform(ProjectileRotation, From);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParameters.Instigator = this;
-
-	GetWorld()->SpawnActor<AActor>(Object, SpawnTransformMatrix, SpawnParameters);
+	ActionComponent->StartAction(this, "PrimaryAttack");
 }
 
 void ASCharacter::SprintStart()
@@ -172,41 +113,16 @@ void ASCharacter::SprintStop()
 	ActionComponent->StopAction(this, "Sprint");
 }
 
-void ASCharacter::PrimaryAttackTimeElapsed()
-{
-	const auto HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	const auto HandRotation = GetMesh()->GetSocketRotation("Muzzle_01");
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CastPrimaryAbilityParticleEffect, HandLocation, HandRotation);
-	SpawnProjectile(PrimaryAttackProjectileClass, HandLocation);
-}
-
 void ASCharacter::PrimaryAbility()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
-	                                       &ASCharacter::PrimaryAbilityTimeElapsed, .2f);
-}
-
-void ASCharacter::PrimaryAbilityTimeElapsed()
-{
-	const auto HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	SpawnProjectile(PrimaryAbilityProjectileClass, HandLocation);
+	ActionComponent->StartAction(this, "PrimaryAbility");
 }
 
 void ASCharacter::SecondaryAbility()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorld()->GetTimerManager().SetTimer(TimerHandlePrimaryAttack, this,
-	                                       &ASCharacter::SecondaryAbilityTimeElapsed, .2f);
+	ActionComponent->StartAction(this, "SecondaryAbility");
 }
 
-void ASCharacter::SecondaryAbilityTimeElapsed()
-{
-	const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	SpawnProjectile(SecondaryAbilityProjectileClass, HandLocation);
-}
 
 void ASCharacter::PrimaryInteract()
 {
@@ -215,7 +131,6 @@ void ASCharacter::PrimaryInteract()
 	InteractionComponent->PrimaryInteract();
 }
 
-// Called to bind functionality to input
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);

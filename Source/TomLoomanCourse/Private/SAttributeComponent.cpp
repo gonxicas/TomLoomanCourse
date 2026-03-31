@@ -1,4 +1,4 @@
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 
 #include "SGameModeBase.h"
 

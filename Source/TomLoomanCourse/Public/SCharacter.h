@@ -38,23 +38,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Interaction")
 	USInteractionComponent* InteractionComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> PrimaryAttackProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> PrimaryAbilityProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UParticleSystem* CastPrimaryAbilityParticleEffect;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> SecondaryAbilityProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
-	FTimerHandle TimerHandlePrimaryAttack;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USAttributeComponent* AttributeComponent;
 
@@ -108,15 +91,9 @@ public:
 
 	void Test();
 	void PrimaryAttack();
-	void AdjustSpawnRotationWithTarget(const FVector& HandLocation,
-	                                   UE::Math::TRotator<double>& ProjectileRotation) const;
-	void PrimaryAttackTimeElapsed();
-	void PrimaryAbilityTimeElapsed();
 	void SecondaryAbility();
-	void SecondaryAbilityTimeElapsed();
 	void PrimaryInteract();
 	void PrimaryAbility();
-	void SpawnProjectile(UClass* Object, const FVector& From);
 	void SprintStart();
 	void SprintStop();
 	

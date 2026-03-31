@@ -3,7 +3,7 @@
 
 #include "SGameplayFunctionLibrary.h"
 
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 
 static TAutoConsoleVariable<float> CVarDamageImpulseMultiplier(
 	TEXT("su.DamageImpulse"), 1.f, TEXT("Damage impulse modifier added when a character dies."), ECVF_Cheat);

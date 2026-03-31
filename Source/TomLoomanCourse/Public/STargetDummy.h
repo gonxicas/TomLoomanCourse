@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "GameFramework/Actor.h"
 #include "STargetDummy.generated.h"
 

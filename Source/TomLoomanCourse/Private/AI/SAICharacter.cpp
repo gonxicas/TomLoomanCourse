@@ -2,7 +2,7 @@
 
 #include "AIController.h"
 #include "BrainComponent.h"
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"

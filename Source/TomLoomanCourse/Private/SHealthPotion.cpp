@@ -3,7 +3,7 @@
 
 #include "SHealthPotion.h"
 
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "SCreditSystem.h"
 #include "Components/SphereComponent.h"
 

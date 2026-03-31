@@ -3,7 +3,7 @@
 
 #include "AI/SBTService_CheckLowHealth.h"
 #include "AIController.h"
-#include "SAttributeComponent.h"
+#include "Actions/SAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 
