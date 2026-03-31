@@ -14,7 +14,9 @@ public class TomLoomanCourse : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"EnhancedInput", "AIModule"
+			"EnhancedInput",
+			"AIModule",
+			"GameplayTags"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

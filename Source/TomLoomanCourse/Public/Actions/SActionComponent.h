@@ -1,9 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "SActionComponent.generated.h"
-
 
 class USAction;
 
@@ -14,8 +14,9 @@ class TOMLOOMANCOURSE_API USActionComponent : public UActorComponent
 
 public:	
 	
-	USActionComponent();
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
+	FGameplayTagContainer ActiveGameplayTags;
+	
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	void AddAction(TSubclassOf<USAction>  ActionClass);
 
@@ -25,6 +26,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool StopAction(AActor* Instigator, FName ActionName);
 	
+	USActionComponent();
+
 protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Action")
