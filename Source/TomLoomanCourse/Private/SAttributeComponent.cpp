@@ -10,6 +10,8 @@ USAttributeComponent::USAttributeComponent()
 {
 	MaxHealth = 120;
 	Health = MaxHealth;
+	Rage = 0;
+	MaxRage = 150;
 }
 
 void USAttributeComponent::BeginPlay()
@@ -47,6 +49,29 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	}
 
 	return ActualDelta != 0;
+}
+
+void USAttributeComponent::ApplyRageChange(float RageAmount)
+{
+	
+	Rage = FMath::Clamp(Rage + RageAmount, .0f, MaxRage);
+	OnRageChanged.Broadcast( this, Rage, RageAmount);
+	
+}
+
+bool USAttributeComponent::TryUseRage(float RageCost)
+{
+	const auto bCanAfford = CanAffordRage(RageCost);
+	if (bCanAfford)
+	{
+		ApplyRageChange(-RageCost);
+	}
+	return bCanAfford;
+}
+
+bool USAttributeComponent::CanAffordRage(float RageCost)
+{
+	return Rage >= RageCost;
 }
 
 bool USAttributeComponent::HasMaxHealth() const

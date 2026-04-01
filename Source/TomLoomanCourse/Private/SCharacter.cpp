@@ -47,6 +47,7 @@ void ASCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+	AttributeComponent->OnRageChanged.AddDynamic(this, &ASCharacter::OnRageChanged);
 }
 
 void ASCharacter::Move(const FInputActionValue& ActionValue)
@@ -77,6 +78,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 {
 	if (Delta < .0f && NewHealth > .0f)
 	{
+		OwningComponent->ApplyRageChange(-Delta);
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 	}
 
@@ -85,6 +87,12 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		auto PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
 	}
+}
+
+void ASCharacter::OnRageChanged(USAttributeComponent* OwningComponent, float NewRage,
+	float Delta)
+{
+	
 }
 
 // Called every frame

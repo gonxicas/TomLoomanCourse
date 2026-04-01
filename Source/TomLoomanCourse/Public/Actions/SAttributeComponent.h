@@ -7,6 +7,9 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FOnRageChanged, USAttributeComponent*, OwningComp, float, NewRage, float, Delta);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TOMLOOMANCOURSE_API USAttributeComponent : public UActorComponent
 {
@@ -27,19 +30,37 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
 	float MaxHealth;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
+	float Rage;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
+	float MaxRage;
 
 	virtual void BeginPlay() override;
 
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnRageChanged OnRageChanged;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const {return Health > 0.f;}
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	void ApplyRageChange(float RageAmount);
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool TryUseRage(float RageCost);
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool CanAffordRage(float RageCost);
+	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool HasMaxHealth() const;
 
