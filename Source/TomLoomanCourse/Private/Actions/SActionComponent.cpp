@@ -88,3 +88,13 @@ bool USActionComponent::StopAction(AActor* Instigator, FName ActionName)
 
 	return false;
 }
+
+USAction* USActionComponent::GetAction(TSubclassOf<USAction> ActionClass)
+{
+	for (USAction* Action : Actions)
+	{
+		if (Action->IsA(ActionClass))
+			return Action;
+	}
+	return nullptr;
+}

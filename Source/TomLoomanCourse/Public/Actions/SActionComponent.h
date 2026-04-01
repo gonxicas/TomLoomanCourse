@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
+#include "TomLoomanCourse/SPowerUp.h"
 #include "SActionComponent.generated.h"
 
 class USAction;
@@ -29,6 +30,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool StopAction(AActor* Instigator, FName ActionName);
 	
+	USAction* GetAction(TSubclassOf<USAction> ActionClass);
+
 	USActionComponent();
 
 protected:
