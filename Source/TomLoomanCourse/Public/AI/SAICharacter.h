@@ -38,8 +38,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	
-	USWorldUserWidget* ActiveHealthBar;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerSpotWidgetClass;
 	
+	UPROPERTY()
+	TObjectPtr<USWorldUserWidget> ActiveHealthBar;
+	
+	UPROPERTY()
+	TObjectPtr<USWorldUserWidget> ActivePlayerSpotWidget;
+
 
 	virtual void PostInitializeComponents() override;
 	
@@ -50,5 +57,7 @@ protected:
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
 
 	void SetTargetActor(AActor* NewTarget);
+	
+	AActor* GetTargetActor() const;
 	
 };

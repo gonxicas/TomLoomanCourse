@@ -36,7 +36,18 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
+	if (GetTargetActor() == Pawn) return;
+	
 	SetTargetActor(Pawn);
+	if(!ActivePlayerSpotWidget)
+	{
+		ActivePlayerSpotWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpotWidgetClass);
+	}
+	if (ActivePlayerSpotWidget)
+	{
+		ActivePlayerSpotWidget->SetAttachedActor(this);
+		ActivePlayerSpotWidget->AddToViewport();
+	}
 	DrawDebugString(GetWorld(), GetActorLocation(), TEXT("Player Spotted"),
 	                nullptr, FColor::White, 4.0f, true);
 }
@@ -99,4 +110,15 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", NewTarget);
 	
 
+}
+
+AActor* ASAICharacter::GetTargetActor() const
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+
+	if (!AIController)
+	{
+		return nullptr;
+	}
+	return Cast<AActor>( AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 }
