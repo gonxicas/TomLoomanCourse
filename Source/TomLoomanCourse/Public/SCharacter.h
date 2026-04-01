@@ -85,7 +85,7 @@ protected:
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
 	
 	UFUNCTION()
-	void OnRageChanged(USAttributeComponent* OwningComponent, float NewRage, float Delta);
+	void OnRageChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewRage, float Delta);
 
 
 public:

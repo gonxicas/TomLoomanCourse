@@ -55,7 +55,7 @@ void USAttributeComponent::ApplyRageChange(float RageAmount)
 {
 	
 	Rage = FMath::Clamp(Rage + RageAmount, .0f, MaxRage);
-	OnRageChanged.Broadcast( this, Rage, RageAmount);
+	OnRageChanged.Broadcast(GetOwner(), this, Rage, RageAmount);
 	
 }
 

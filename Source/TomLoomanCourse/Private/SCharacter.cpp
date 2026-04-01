@@ -89,7 +89,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	}
 }
 
-void ASCharacter::OnRageChanged(USAttributeComponent* OwningComponent, float NewRage,
+void ASCharacter::OnRageChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewRage,
 	float Delta)
 {
 	
