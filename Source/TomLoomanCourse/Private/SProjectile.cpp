@@ -29,6 +29,7 @@ ASProjectile::ASProjectile()
 	LoopFlightSoundComponent = CreateDefaultSubobject<UAudioComponent>("FlightLoopSound");
 	LoopFlightSoundComponent->SetupAttachment(SphereComponent);
 
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned

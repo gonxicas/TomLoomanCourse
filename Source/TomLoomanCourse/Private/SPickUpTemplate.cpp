@@ -17,6 +17,7 @@ ASPickUpTemplate::ASPickUpTemplate()
 	RootComponent = BaseMeshComponent;
 
 	DelayTime = 10.0f;
+	bReplicates = true;
 }
 
 void ASPickUpTemplate::ResetPickUp()
