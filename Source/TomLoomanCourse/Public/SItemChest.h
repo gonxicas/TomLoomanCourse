@@ -17,9 +17,12 @@ class TOMLOOMANCOURSE_API ASItemChest : public AActor, public ISGameplayInterfac
 public:	
 	void Interact_Implementation(APawn* InstigatorPawn);
 	ASItemChest();
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly)//RepNotify
+	bool bLidOpened;
+	
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
 	
@@ -29,4 +32,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
+	UFUNCTION()
+	void OnRep_LidOpened();
+	
+	
+	
 };
