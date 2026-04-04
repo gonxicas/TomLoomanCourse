@@ -4,6 +4,12 @@
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetIsReplicatedByDefault(true);
+}
+
+void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartAction(Instigator, ActionName);
 }
 
 
@@ -49,7 +55,7 @@ void USActionComponent::RemoveAction(USAction* ActionToRemove)
 {
 	if (!ensure(ActionToRemove && !ActionToRemove->IsRunning()))
 		return;
-	
+
 	Actions.Remove(ActionToRemove);
 }
 
@@ -64,6 +70,10 @@ bool USActionComponent::StartAction(AActor* Instigator, FName ActionName)
 		}
 		if (Action && Action->ActionName == ActionName)
 		{
+			if (!GetOwner()->HasAuthority())
+			{
+				ServerStartAction(Instigator, ActionName);
+			}
 			Action->StartAction(Instigator);
 			return true;
 		}

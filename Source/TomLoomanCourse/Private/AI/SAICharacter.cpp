@@ -75,6 +75,8 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 	if(InstigatorActor != this)
 	{
 		AAIController* MyAIController = Cast<AAIController>(GetController());
+		if (!MyAIController) return;
+		
 		MyAIController->GetBlackboardComponent()->SetValueAsBool(TEXT("HasReceivedAttackFromPlayer"), true);
 		SetTargetActor(InstigatorActor);
 	}
