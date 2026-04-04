@@ -1,6 +1,7 @@
 #include "Actions/SAttributeComponent.h"
 
 #include "SGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"), 1.0f,
                                                         TEXT("Global Damage Modifier for Attribute Component."),
@@ -12,6 +13,8 @@ USAttributeComponent::USAttributeComponent()
 	Health = MaxHealth;
 	Rage = 0;
 	MaxRage = 150;
+
+	SetIsReplicatedByDefault(true);
 }
 
 void USAttributeComponent::BeginPlay()
@@ -20,15 +23,19 @@ void USAttributeComponent::BeginPlay()
 	Health = MaxHealth;
 }
 
+void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
-	
 	if (!GetOwner()->CanBeDamaged() && Delta < .0f)
 	{
 		return false;
 	}
 
-	if(Delta < .0f)
+	if (Delta < .0f)
 	{
 		Delta *= CVarDamageMultiplier.GetValueOnGameThread();
 	}
@@ -36,7 +43,10 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	Health = FMath::Clamp(Health + Delta, .0f, MaxHealth);
 
 	float ActualDelta = Health - OldHealth;
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
+	if (ActualDelta != 0.f)
+	{
+		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+	}
 
 	if (ActualDelta < .0f && Health == .0f)
 	{
@@ -53,10 +63,8 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 
 void USAttributeComponent::ApplyRageChange(float RageAmount)
 {
-	
 	Rage = FMath::Clamp(Rage + RageAmount, .0f, MaxRage);
 	OnRageChanged.Broadcast(GetOwner(), this, Rage, RageAmount);
-	
 }
 
 bool USAttributeComponent::TryUseRage(float RageCost)
@@ -108,4 +116,13 @@ bool USAttributeComponent::IsActorAlive(AActor* Actor)
 	}
 
 	return AttributeComponent->IsAlive();
+}
+
+void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAttributeComponent, Health);
+	DOREPLIFETIME(USAttributeComponent, MaxHealth);
+	//DOREPLIFETIME_CONDITION(USAttributeComponent, MaxHealth, COND_OwnerOnly)
 }

@@ -20,12 +20,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
 	static bool IsActorAlive(AActor* Actor);
-	
+		
+	virtual void BeginPlay() override;
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attribute")
 	float Health;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attribute")
 	float MaxHealth;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
@@ -33,8 +34,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
 	float MaxRage;
-
-	virtual void BeginPlay() override;
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
 
 public:
 	UPROPERTY(BlueprintAssignable)
@@ -68,4 +70,5 @@ public:
 	float GetCurrentHealthPercentage() const {return Health / MaxHealth;}
 
 	bool Kill(AActor* InstigatorActor);
+
 };
