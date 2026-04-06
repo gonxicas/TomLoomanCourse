@@ -24,15 +24,10 @@ ASGameModeBase::ASGameModeBase()
 	
 	SlotName = "SaveGame01";
 }
-void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
-{
-	Super::InitGame(MapName, Options, ErrorMessage);
-	LoadSaveGame();
-}
 void ASGameModeBase::StartPlay()
 {
+	LoadSaveGame();
 	Super::StartPlay();
-
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed,
 	                                SpawnTimerInterval, true);
 	if (!ensure(PickUpSpawnQuery) || !ensure(PickUpClasses.Num() > 0))
@@ -267,6 +262,19 @@ void ASGameModeBase::WriteSaveGame()
 		}
 	}
 	
+	CurrentSaveGame->SavedActors.Empty();
+	
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		auto Actor = *It;
+		if (!Actor->Implements<USGameplayInterface>()) continue;
+		
+		FActorSavedData ActorData;
+		ActorData.ActorName = Actor->GetName();
+		ActorData.Transform = Actor->GetTransform();
+		CurrentSaveGame->SavedActors.Add(ActorData);
+	}
+	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 }
 
@@ -281,6 +289,24 @@ void ASGameModeBase::LoadSaveGame()
 			return;
 		}
 		
+		for (FActorIterator It(GetWorld()); It; ++It)
+		{
+			auto Actor = *It;
+			if (!Actor->Implements<USGameplayInterface>())
+			{
+				continue;
+			}
+			
+			for (auto& ActorData : CurrentSaveGame->SavedActors)
+			{
+				if (ActorData.ActorName == Actor->GetName())
+				{
+					Actor->SetActorTransform(ActorData.Transform);
+					break;
+				}
+			}
+		}
+		
 		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data"));
 	}
 	else
@@ -288,4 +314,6 @@ void ASGameModeBase::LoadSaveGame()
 		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
 		UE_LOG(LogTemp, Log, TEXT("Created SaveGame Data"));
 	}
+	
+	
 }
