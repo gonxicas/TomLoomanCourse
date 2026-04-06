@@ -17,7 +17,7 @@ public:
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly, Category = "Credits")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing="OnRep_ModifyCredits", Category = "Credits")
 	int CurrentCredits;
 
 public:
@@ -28,8 +28,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentCredits() const {return CurrentCredits;}
 
+	UFUNCTION(BlueprintCallable, Unreliable, Server)
+	void Server_ModifyCredits(int CreditsToAdd);
+	
 	UFUNCTION(BlueprintCallable)
-	bool ModifyCredits(int CreditsToAdd);
+	void OnRep_ModifyCredits(int CreditsToAdd) const;
 
 	UFUNCTION(BlueprintCallable)
 	bool HasEnoughCredits(int CreditsToSpend) const;

@@ -19,7 +19,7 @@ void ASCoinPickUp::InteractAction(APawn* InstigatorPawn)
 		return;
 	}
 
-	CreditSystem->ModifyCredits(Value);
+	CreditSystem->Server_ModifyCredits(Value);
 }
 
 void ASCoinPickUp::PreventInteraction()

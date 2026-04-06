@@ -1,24 +1,35 @@
 #include "SCreditSystem.h"
 
+#include "Net/UnrealNetwork.h"
+
 ASCreditSystem::ASCreditSystem() : CurrentCredits(0)
 {
 }
 
-bool ASCreditSystem::ModifyCredits(int CreditsToAdd)
+void ASCreditSystem::Server_ModifyCredits_Implementation(int CreditsToAdd)
 {
 	if (!HasEnoughCredits(-CreditsToAdd))
 	{
-		return false;
+		return;
 	}
 
 	CurrentCredits += CreditsToAdd;
+	OnRep_ModifyCredits(CreditsToAdd);
+}
 
+void ASCreditSystem::OnRep_ModifyCredits(int CreditsToAdd) const
+{
 	OnCreditsChanged.Broadcast(CurrentCredits, CreditsToAdd);
-
-	return true;
 }
 
 bool ASCreditSystem::HasEnoughCredits(int CreditsToSpend) const
 {
 	return CurrentCredits - CreditsToSpend >= 0;
+}
+
+void ASCreditSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASCreditSystem, CurrentCredits);
 }

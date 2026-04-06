@@ -63,13 +63,14 @@ bool USActionComponent::StartAction(AActor* Instigator, FName ActionName)
 {
 	for (USAction* Action : Actions)
 	{
-		if (!Action->CanStart(Instigator))
-		{
-			auto FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *ActionName.ToString());
-			continue;
-		}
+		
 		if (Action && Action->ActionName == ActionName)
 		{
+			if (!Action->CanStart(Instigator))
+			{
+				auto FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *ActionName.ToString());
+				continue;
+			}
 			if (!GetOwner()->HasAuthority())
 			{
 				ServerStartAction(Instigator, ActionName);
