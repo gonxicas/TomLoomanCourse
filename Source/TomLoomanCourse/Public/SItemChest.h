@@ -20,7 +20,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly)//RepNotify
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly, SaveGame)//RepNotify
 	bool bLidOpened;
 	
 	UPROPERTY(EditAnywhere)
@@ -34,6 +34,8 @@ protected:
 
 	UFUNCTION()
 	void OnRep_LidOpened();
+public:
+	virtual void OnActorLoaded_Implementation() override;
 	
 	
 	
