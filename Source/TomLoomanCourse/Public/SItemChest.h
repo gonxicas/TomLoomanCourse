@@ -37,8 +37,6 @@ protected:
 public:
 	virtual void OnActorLoaded_Implementation() override;
 	
-	virtual void OnActorLoaded_Implementation() override;
-	
 	
 	
 };
