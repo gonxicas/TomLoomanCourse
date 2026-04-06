@@ -40,11 +40,9 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		auto TextColor = Action->IsRunning() ? FColor::Blue : FColor::White;
 		
-		auto ActionMsg = FString::Printf(TEXT("[%s] Action: %s : IsRunning: %s : Outer: %s"),
+		auto ActionMsg = FString::Printf(TEXT("[%s] Action: %s"),
 			*GetNameSafe(GetOwner()),
-			*Action->ActionName.ToString(),
-			Action->IsRunning() ? TEXT("True") : TEXT("False"),
-			*GetNameSafe(Action->GetOuter()));
+			*GetNameSafe(Action));
 		
 		LogOnScreen(this, ActionMsg, TextColor, 0.f);
 	}

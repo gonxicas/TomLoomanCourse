@@ -4,8 +4,8 @@
 #include "Kismet/GameplayStatics.h"
 
 static TAutoConsoleVariable<bool> CVarDebugDrawAttack(TEXT("su.DrawDebugAttack"), false,
-															TEXT("Enable debug lines for Character Attack."),
-															ECVF_Cheat);
+                                                      TEXT("Enable debug lines for Character Attack."),
+                                                      ECVF_Cheat);
 
 USAction_ProjectileAttack::USAction_ProjectileAttack()
 {
@@ -19,22 +19,24 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* Instigator)
 
 	ACharacter* Character = Cast<ACharacter>(Instigator);
 	if (!Character) return;
-	
+
 	Character->PlayAnimMontage(AttackAnim);
 
 	UGameplayStatics::SpawnEmitterAttached(CastingEffect, Character->GetMesh(), HandSocketName,
 	                                       FVector::Zero(), FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
-	FTimerHandle TimerHandle_AttackDelay;
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, "AttackDelay_Elapsed", Character);
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, Delegate, AttackAnimDelay, false);
-
+	if (Character->HasAuthority())
+	{
+		FTimerHandle TimerHandle_AttackDelay;
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, "AttackDelay_Elapsed", Character);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, Delegate, AttackAnimDelay, false);
+	}
 }
 
 void USAction_ProjectileAttack::AttackDelay_Elapsed(ACharacter* InstigatorCharacter)
 {
 	if (!ensureAlways(ProjectileCLass)) return;
-	
+
 	UE::Math::TRotator<double> ProjectileRotation;
 	auto HandLocation = InstigatorCharacter->GetMesh()->GetSocketLocation(HandSocketName);
 	AdjustSpawnRotationWithTarget(InstigatorCharacter, HandLocation, ProjectileRotation);
@@ -45,12 +47,13 @@ void USAction_ProjectileAttack::AttackDelay_Elapsed(ACharacter* InstigatorCharac
 	SpawnParameters.Instigator = InstigatorCharacter;
 
 	GetWorld()->SpawnActor<AActor>(ProjectileCLass, SpawnTransformMatrix, SpawnParameters);
-	
+
 	StopAction(InstigatorCharacter);
 }
 
 void USAction_ProjectileAttack::AdjustSpawnRotationWithTarget(ACharacter* InstigatorCharacter,
-                                                              const FVector& HandLocation, UE::Math::TRotator<double>& ProjectileRotation) const
+                                                              const FVector& HandLocation,
+                                                              UE::Math::TRotator<double>& ProjectileRotation) const
 {
 	const auto CameraLocation = InstigatorCharacter->GetPawnViewLocation();
 	const auto CameraRotation = InstigatorCharacter->GetControlRotation();
@@ -76,9 +79,9 @@ void USAction_ProjectileAttack::AdjustSpawnRotationWithTarget(ACharacter* Instig
 	if (bDebugDraw)
 	{
 		DrawDebugLine(GetWorld(), CameraLocation, TargetPoint, FColor::Red,
-					  false, 2.f, 0, 2.f);
+		              false, 2.f, 0, 2.f);
 		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Red, false, 2.f);
 		DrawDebugLine(GetWorld(), HandLocation, TargetPoint, FColor::Green,
-					  false, 2.f, 0, 2.f);
+		              false, 2.f, 0, 2.f);
 	}
 }
