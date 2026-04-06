@@ -36,3 +36,8 @@ void ASItemChest::OnRep_LidOpened()
 	LidMesh->SetRelativeRotation(FRotator(CurrentPitch,0,0));
 }
 
+void ASItemChest::OnActorLoaded_Implementation()
+{
+	OnRep_LidOpened();
+}
+

@@ -10,6 +10,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/SSaveGame.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true,
                                                 TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
@@ -22,7 +23,7 @@ ASGameModeBase::ASGameModeBase()
 	NumberOfPickUps = 3;
 	MinimumDistanceAmongPickUps = 300.f;
 	
-	SlotName = "SaveGame01";
+	SlotName = "SaveGame02";
 }
 void ASGameModeBase::StartPlay()
 {
@@ -250,7 +251,7 @@ void ASGameModeBase::KillAll()
 		}
 	}
 }
-
+UE_DISABLE_OPTIMIZATION
 void ASGameModeBase::WriteSaveGame()
 {
 	for (int i = 0; i < GameState->PlayerArray.Num(); ++i)
@@ -272,6 +273,15 @@ void ASGameModeBase::WriteSaveGame()
 		FActorSavedData ActorData;
 		ActorData.ActorName = Actor->GetName();
 		ActorData.Transform = Actor->GetTransform();
+		
+		
+		
+		FMemoryWriter MemWriter(ActorData.ByteData);
+		
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		Ar.ArIsSaveGame = true;
+		
+		Actor->Serialize(Ar);
 		CurrentSaveGame->SavedActors.Add(ActorData);
 	}
 	
@@ -280,40 +290,50 @@ void ASGameModeBase::WriteSaveGame()
 
 void ASGameModeBase::LoadSaveGame()
 {
-	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
-	{
-		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
-		if (CurrentSaveGame == nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data"));
-			return;
-		}
-		
-		for (FActorIterator It(GetWorld()); It; ++It)
-		{
-			auto Actor = *It;
-			if (!Actor->Implements<USGameplayInterface>())
-			{
-				continue;
-			}
-			
-			for (auto& ActorData : CurrentSaveGame->SavedActors)
-			{
-				if (ActorData.ActorName == Actor->GetName())
-				{
-					Actor->SetActorTransform(ActorData.Transform);
-					break;
-				}
-			}
-		}
-		
-		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data"));
-	}
-	else
+
+	if (!UGameplayStatics::DoesSaveGameExist(SlotName, 0))
 	{
 		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
 		UE_LOG(LogTemp, Log, TEXT("Created SaveGame Data"));
+		return;
 	}
 	
-	
+	CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+	if (CurrentSaveGame == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data"));
+		return;
+	}
+		
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		auto Actor = *It;
+		if (!Actor->Implements<USGameplayInterface>())
+		{
+			continue;
+		}
+			
+		for (auto& ActorData : CurrentSaveGame->SavedActors)
+		{
+			if (ActorData.ActorName == Actor->GetName())
+			{
+				Actor->SetActorTransform(ActorData.Transform);
+					
+				FMemoryReader MemReader(ActorData.ByteData);
+		
+				FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+				Ar.ArIsSaveGame = true;
+		
+				Actor->Serialize(Ar);
+				
+				ISGameplayInterface::Execute_OnActorLoaded(Actor);
+					
+				break;
+			}
+		}
+	}
+		
+	UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data"));
+
 }
+UE_ENABLE_OPTIMIZATION
