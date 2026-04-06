@@ -7,7 +7,7 @@
 #include "SGameModeBase.generated.h"
 
 
-class USaveGame;
+class USSaveGame;
 class ASPickUpTemplate;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
@@ -28,7 +28,7 @@ protected:
 	FString SlotName;
 	
 	UPROPERTY()
-	TObjectPtr<USaveGame> CurrentSaveGame;
+	TObjectPtr<USSaveGame> CurrentSaveGame;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimerInterval = 2.0f;
@@ -82,6 +82,8 @@ public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	
 	virtual void StartPlay() override;
+	
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 

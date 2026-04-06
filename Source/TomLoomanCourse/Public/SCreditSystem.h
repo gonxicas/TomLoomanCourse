@@ -4,6 +4,8 @@
 #include "GameFramework/PlayerState.h"
 #include "SCreditSystem.generated.h"
 
+class USSaveGame;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnCreditsChanged, float, NewCredits, float, Delta);
 
@@ -36,4 +38,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool HasEnoughCredits(int CreditsToSpend) const;
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SavedObject);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SavedObject);
 };

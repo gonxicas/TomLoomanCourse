@@ -7,6 +7,7 @@
 #include "SPickUpTemplate.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/SSaveGame.h"
 
@@ -48,6 +49,17 @@ void ASGameModeBase::StartPlay()
 
 	PickUpQueryInstance->GetOnQueryFinishedEvent().AddDynamic(
 		this, &ASGameModeBase::ASGameModeBase::OnPowerUpQueryCompleted);
+}
+
+void ASGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	
+	auto PlayerState = NewPlayer->GetPlayerState<ASCreditSystem>();
+	
+	if (!PlayerState) return;
+	
+	PlayerState->LoadPlayerState(CurrentSaveGame);
 }
 
 bool ASGameModeBase::HasReachedMaximumBotCapacity()
@@ -246,6 +258,15 @@ void ASGameModeBase::KillAll()
 
 void ASGameModeBase::WriteSaveGame()
 {
+	for (int i = 0; i < GameState->PlayerArray.Num(); ++i)
+	{
+		if (auto PlayerState = Cast<ASCreditSystem>(GameState->PlayerArray[i]))
+		{
+			PlayerState->SavePlayerState(CurrentSaveGame);
+			break;
+		}
+	}
+	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 }
 

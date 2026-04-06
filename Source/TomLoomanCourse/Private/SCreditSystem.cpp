@@ -1,6 +1,7 @@
 #include "SCreditSystem.h"
 
 #include "Net/UnrealNetwork.h"
+#include "SaveSystem/SSaveGame.h"
 
 ASCreditSystem::ASCreditSystem() : CurrentCredits(0)
 {
@@ -25,6 +26,21 @@ void ASCreditSystem::OnRep_ModifyCredits(int CreditsToAdd) const
 bool ASCreditSystem::HasEnoughCredits(int CreditsToSpend) const
 {
 	return CurrentCredits - CreditsToSpend >= 0;
+}
+
+void ASCreditSystem::SavePlayerState_Implementation(USSaveGame* SavedObject)
+{
+	if (!SavedObject) return;
+	
+	SavedObject->Credits = CurrentCredits;
+	
+}
+
+void ASCreditSystem::LoadPlayerState_Implementation(USSaveGame* SavedObject)
+{
+	if (!SavedObject) return;
+
+	CurrentCredits = SavedObject->Credits;
 }
 
 void ASCreditSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
