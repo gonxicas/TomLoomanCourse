@@ -32,7 +32,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		return;
 	}
 	
-	if (ActionComponent)
+	if (ActionComponent && HasAuthority())
 	{
 		auto instigator = GetInstigator();
 		ActionComponent->AddAction(instigator, BurningActionClass);

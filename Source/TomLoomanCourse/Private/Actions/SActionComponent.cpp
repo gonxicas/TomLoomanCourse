@@ -10,6 +10,11 @@ USActionComponent::USActionComponent()
 	SetIsReplicatedByDefault(true);
 }
 
+void USActionComponent::ServerStopAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StopAction(Instigator, ActionName);
+}
+
 void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartAction(Instigator, ActionName);
@@ -22,7 +27,7 @@ void USActionComponent::BeginPlay()
 
 	if (!GetOwner()->HasAuthority()) return;
 	
-	for (TSubclassOf<USAction> Action : DefaultActions)
+	for (TSubclassOf Action : DefaultActions)
 	{
 		AddAction(GetOwner(), Action);
 	}
@@ -52,6 +57,12 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 {
 	if (!ensure(ActionClass))
 	{
+		return;
+	}
+	
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client attempting to AddAction. [Class: %s]"),*GetNameSafe(ActionClass))
 		return;
 	}
 
@@ -107,6 +118,10 @@ bool USActionComponent::StopAction(AActor* Instigator, FName ActionName)
 		{
 			if (Action->IsRunning())
 			{
+				if (!GetOwner()->HasAuthority())
+				{
+					ServerStopAction(Instigator, ActionName);
+				}
 				Action->StopAction(Instigator);
 				return true;
 			}
