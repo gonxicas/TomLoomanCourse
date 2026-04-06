@@ -1,13 +1,18 @@
 #include "SPickUpTemplate.h"
 
+void ASPickUpTemplate::ResetPickupComponents_Implementation()
+{
+	HideMesh();
+	PreventInteraction();
+	ResetPickUp();
+}
+
 void ASPickUpTemplate::Interact_Implementation(APawn* InstigatorPawn)
 {
 	if(!InteractPrecondition(InstigatorPawn)) return;
 	
 	InteractAction(InstigatorPawn);
-	HideMesh();
-	PreventInteraction();
-	ResetPickUp();
+	ResetPickupComponents();
 }
 
 // Sets default values

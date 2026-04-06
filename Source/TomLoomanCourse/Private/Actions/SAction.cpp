@@ -23,7 +23,10 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 
 bool USAction::CanStart_Implementation(AActor* Instigator) const
 {
-	if (bIsRunning) return false;
+	if (bIsRunning)
+	{
+		return false;
+	}
 	return !GetOwningComponent()->ActiveGameplayTags.HasAny(BlockedTags);
 }
 

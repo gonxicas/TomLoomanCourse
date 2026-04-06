@@ -34,11 +34,8 @@ void ASAICharacter::PostInitializeComponents()
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
 }
 
-void ASAICharacter::OnPawnSeen(APawn* Pawn)
+void ASAICharacter::MulticastDisplayPlayerSpotWidget_Implementation()
 {
-	if (GetTargetActor() == Pawn) return;
-	
-	SetTargetActor(Pawn);
 	if(!ActivePlayerSpotWidget)
 	{
 		ActivePlayerSpotWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpotWidgetClass);
@@ -48,6 +45,14 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 		ActivePlayerSpotWidget->SetAttachedActor(this);
 		ActivePlayerSpotWidget->AddToViewport();
 	}
+}
+
+void ASAICharacter::OnPawnSeen(APawn* Pawn)
+{
+	if (GetTargetActor() == Pawn) return;
+	
+	SetTargetActor(Pawn);
+	MulticastDisplayPlayerSpotWidget();
 	DrawDebugString(GetWorld(), GetActorLocation(), TEXT("Player Spotted"),
 	                nullptr, FColor::White, 4.0f, true);
 }

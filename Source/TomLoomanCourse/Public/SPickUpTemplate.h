@@ -13,6 +13,9 @@ class TOMLOOMANCOURSE_API ASPickUpTemplate : public AActor, public ISGameplayInt
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(NetMulticast, Unreliable)
+	void ResetPickupComponents();
+	UFUNCTION()
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override final;
 	ASPickUpTemplate();
 

@@ -49,7 +49,9 @@ protected:
 
 
 	virtual void PostInitializeComponents() override;
-	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastDisplayPlayerSpotWidget();
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 

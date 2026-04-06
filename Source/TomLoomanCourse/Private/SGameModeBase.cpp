@@ -194,7 +194,7 @@ void ASGameModeBase::GiveCreditsToPlayer(const ASCharacter* Player) const
 	{
 		return;
 	}
-	CreditSystem->ModifyCredits(CreditsPerKill);
+	CreditSystem->Server_ModifyCredits(CreditsPerKill);
 }
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)

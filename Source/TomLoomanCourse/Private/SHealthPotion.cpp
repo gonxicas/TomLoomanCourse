@@ -46,7 +46,7 @@ void ASHealthPotion::InteractAction(APawn* InstigatorPawn)
 		return;
 	}
 
-	CreditSystem->ModifyCredits(-Cost);
+	CreditSystem->Server_ModifyCredits(-Cost);
 	
 	
 }

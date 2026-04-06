@@ -29,14 +29,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attribute")
 	float MaxHealth;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attribute")
 	float Rage;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attribute")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attribute")
 	float MaxRage;
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 public:
 	UPROPERTY(BlueprintAssignable)
