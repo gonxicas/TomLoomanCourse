@@ -14,8 +14,8 @@ class TOMLOOMANCOURSE_API ASItemChest : public AActor, public ISGameplayInterfac
 {
 	GENERATED_BODY()
 	
-public:	
-	void Interact_Implementation(APawn* InstigatorPawn);
+public:
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 	ASItemChest();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -35,8 +35,6 @@ protected:
 	UFUNCTION()
 	void OnRep_LidOpened();
 public:
-	virtual void OnActorLoaded_Implementation() override;
-	
 	virtual void OnActorLoaded_Implementation() override;
 	
 	
