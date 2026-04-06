@@ -1,5 +1,8 @@
 #include "Actions/SActionComponent.h"
 #include "Actions/SAction.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
+#include "TomLoomanCourse/TomLoomanCourse.h"
 
 USActionComponent::USActionComponent()
 {
@@ -17,6 +20,8 @@ void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!GetOwner()->HasAuthority()) return;
+	
 	for (TSubclassOf<USAction> Action : DefaultActions)
 	{
 		AddAction(GetOwner(), Action);
@@ -28,8 +33,21 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, .0f, FColor::White, DebugMsg);
+	//FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
+	//GEngine->AddOnScreenDebugMessage(-1, .0f, FColor::White, DebugMsg);
+
+	for (USAction* Action : Actions)
+	{
+		auto TextColor = Action->IsRunning() ? FColor::Blue : FColor::White;
+		
+		auto ActionMsg = FString::Printf(TEXT("[%s] Action: %s : IsRunning: %s : Outer: %s"),
+			*GetNameSafe(GetOwner()),
+			*Action->ActionName.ToString(),
+			Action->IsRunning() ? TEXT("True") : TEXT("False"),
+			*GetNameSafe(Action->GetOuter()));
+		
+		LogOnScreen(this, ActionMsg, TextColor, 0.f);
+	}
 }
 
 void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
@@ -108,4 +126,25 @@ USAction* USActionComponent::GetAction(TSubclassOf<USAction> ActionClass)
 			return Action;
 	}
 	return nullptr;
+}
+
+bool USActionComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch,
+                                            FReplicationFlags* RepFlags)
+{
+	auto bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for (USAction* Action : Actions)
+	{
+		if (Action)
+		{
+			bWroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
+		}
+	}
+	return bWroteSomething;
+}
+
+void USActionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(USActionComponent, Actions);
 }
