@@ -7,6 +7,7 @@
 #include "SGameModeBase.generated.h"
 
 
+class USaveGame;
 class ASPickUpTemplate;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
@@ -23,6 +24,12 @@ public:
 	ASGameModeBase();
 
 protected:
+	
+	FString SlotName;
+	
+	UPROPERTY()
+	TObjectPtr<USaveGame> CurrentSaveGame;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimerInterval = 2.0f;
 
@@ -55,7 +62,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "PickUp")
 	float MinimumDistanceAmongPickUps = 300.f;
 	
-	virtual void StartPlay() override;
+	
 	bool HasReachedMaximumBotCapacity();
 
 	UFUNCTION()
@@ -72,8 +79,17 @@ protected:
 	void GiveCreditsToPlayer(const ASCharacter* Player) const;
 
 public:
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	
+	virtual void StartPlay() override;
+	
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
 	UFUNCTION(Exec)
 	void KillAll();
+	
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void WriteSaveGame();
+	
+	void LoadSaveGame();
 };

@@ -7,14 +7,27 @@
 #include "SPickUpTemplate.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "SaveSystem/SSaveGame.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true,
                                                 TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
 ASGameModeBase::ASGameModeBase()
 {
+	SpawnTimerInterval = 2.0f;
+	CreditsPerKill = 10;
+	
+	NumberOfPickUps = 3;
+	MinimumDistanceAmongPickUps = 300.f;
+	
+	SlotName = "SaveGame01";
 }
-
+void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+	LoadSaveGame();
+}
 void ASGameModeBase::StartPlay()
 {
 	Super::StartPlay();
@@ -33,7 +46,8 @@ void ASGameModeBase::StartPlay()
 		return;
 	}
 
-	PickUpQueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &ASGameModeBase::ASGameModeBase::OnPowerUpQueryCompleted);
+	PickUpQueryInstance->GetOnQueryFinishedEvent().AddDynamic(
+		this, &ASGameModeBase::ASGameModeBase::OnPowerUpQueryCompleted);
 }
 
 bool ASGameModeBase::HasReachedMaximumBotCapacity()
@@ -137,15 +151,15 @@ void ASGameModeBase::OnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* 
 		for (FVector UsedLocation : UsedLocations)
 		{
 			float Distance = (UsedLocation - CurrentLocation).Size();
-			
-			if(Distance < MinimumDistanceAmongPickUps)
+
+			if (Distance < MinimumDistanceAmongPickUps)
 			{
 				bIsValidLocation = false;
 				break;
 			}
 		}
-		
-		if(!bIsValidLocation)
+
+		if (!bIsValidLocation)
 		{
 			continue;
 		}
@@ -197,6 +211,8 @@ void ASGameModeBase::GiveCreditsToPlayer(const ASCharacter* Player) const
 	CreditSystem->Server_ModifyCredits(CreditsPerKill);
 }
 
+
+
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
 	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
@@ -225,5 +241,30 @@ void ASGameModeBase::KillAll()
 		{
 			AttributeComponent->Kill(this);
 		}
+	}
+}
+
+void ASGameModeBase::WriteSaveGame()
+{
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
+}
+
+void ASGameModeBase::LoadSaveGame()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if (CurrentSaveGame == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data"));
+			return;
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Loaded SaveGame Data"));
+	}
+	else
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
+		UE_LOG(LogTemp, Log, TEXT("Created SaveGame Data"));
 	}
 }
