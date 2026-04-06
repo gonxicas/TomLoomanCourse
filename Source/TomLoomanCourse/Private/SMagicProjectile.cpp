@@ -49,7 +49,7 @@ void ASMagicProjectile::ActivateImpactParticleEffect()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticleEffect, GetActorLocation(), GetActorRotation());
 	Destroy();
 }
-
+//@FIXME: If the projectile on the server spawns and gets destroy before its replicated, no sfx are triggered on the client
 void ASMagicProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
                                        UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

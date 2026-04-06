@@ -19,8 +19,8 @@ USAttributeComponent::USAttributeComponent()
 
 void USAttributeComponent::BeginPlay()
 {
-	Super::BeginPlay();
 	Health = MaxHealth;
+	Super::BeginPlay();
 }
 
 void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)

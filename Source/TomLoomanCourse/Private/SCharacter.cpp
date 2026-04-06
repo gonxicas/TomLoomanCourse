@@ -86,6 +86,8 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	{
 		auto PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
+		
+		SetLifeSpan(5.f);
 	}
 }
 
