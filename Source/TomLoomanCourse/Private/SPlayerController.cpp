@@ -4,5 +4,5 @@ void ASPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	
-	OnPlayerStateRecieved.Broadcast(PlayerState);
+	OnPlayerStateReceived.Broadcast(PlayerState);
 }

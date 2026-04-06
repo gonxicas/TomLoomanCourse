@@ -13,7 +13,7 @@ class TOMLOOMANCOURSE_API ASPlayerController : public APlayerController
 	
 protected:
 	UPROPERTY(BlueprintAssignable)
-	FOnPlayerStateChanged OnPlayerStateRecieved;
+	FOnPlayerStateChanged OnPlayerStateReceived;
 	
 public:
 	virtual void OnRep_PlayerState() override;
