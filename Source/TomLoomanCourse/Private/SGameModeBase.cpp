@@ -27,8 +27,8 @@ ASGameModeBase::ASGameModeBase()
 }
 void ASGameModeBase::StartPlay()
 {
-	LoadSaveGame();
 	Super::StartPlay();
+	LoadSaveGame();
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed,
 	                                SpawnTimerInterval, true);
 	if (!ensure(PickUpSpawnQuery) || !ensure(PickUpClasses.Num() > 0))
