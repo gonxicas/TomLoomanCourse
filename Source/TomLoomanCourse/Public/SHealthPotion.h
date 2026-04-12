@@ -18,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	ASHealthPotion();
 	bool HasEnoughCredits(APawn* InstigatorPawn) const;
+	virtual FText GetInteractText_Implementation(APawn* Instigator) const override;
 
 protected:
 	UPROPERTY(VisibleAnywhere)

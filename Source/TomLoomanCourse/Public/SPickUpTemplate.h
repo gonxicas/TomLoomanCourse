@@ -17,6 +17,8 @@ public:
 	void ResetPickupComponents();
 	UFUNCTION()
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override final;
+	virtual FText GetInteractText_Implementation(APawn* Instigator) const override;
+	
 	ASPickUpTemplate();
 
 protected:

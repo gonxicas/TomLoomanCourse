@@ -7,6 +7,8 @@
 #include "SCreditSystem.h"
 #include "Components/SphereComponent.h"
 
+#define LOCTEXT_NAMESPACE "InteractableActors"
+
 // Sets default values
 ASHealthPotion::ASHealthPotion()
 {
@@ -51,6 +53,17 @@ void ASHealthPotion::InteractAction(APawn* InstigatorPawn)
 	
 }
 
+FText ASHealthPotion::GetInteractText_Implementation(APawn* InstigatorPawn) const
+{
+	auto AttributeComponent = USAttributeComponent::GetAttributes(InstigatorPawn);
+	if (AttributeComponent && AttributeComponent->HasMaxHealth())
+	{
+		return LOCTEXT("HealthPotion_FullHealthWarning", "Already at full health.");
+	}
+	
+	return FText::Format(LOCTEXT("HealthPotion_InteractMessage", "Cost {0} Credits. Restores {1} Health"), Cost, HealthRestored);
+}
+
 void ASHealthPotion::PreventInteraction()
 {
 	SetActorEnableCollision(false);
@@ -67,7 +80,7 @@ void ASHealthPotion::ResetPickUpDelayed()
 	AllowInteraction();
 }
 
-
+#undef LOCTEXT_NAMESPACE
 
 
 

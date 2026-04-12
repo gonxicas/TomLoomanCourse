@@ -15,6 +15,11 @@ void ASPickUpTemplate::Interact_Implementation(APawn* InstigatorPawn)
 	ResetPickupComponents();
 }
 
+FText ASPickUpTemplate::GetInteractText_Implementation(APawn* InstigatorPawn) const
+{
+	return FText::GetEmpty();
+}
+
 // Sets default values
 ASPickUpTemplate::ASPickUpTemplate()
 {
