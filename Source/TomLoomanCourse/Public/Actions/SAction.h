@@ -6,6 +6,7 @@
 
 class USActionComponent;
 class UWorld;
+class UTexture2D;
 
 USTRUCT()
 struct FActionWrappedData
@@ -23,6 +24,9 @@ class TOMLOOMANCOURSE_API USAction : public UObject
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UTexture2D> Icon;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
 	FGameplayTagContainer GrantedTags;
 
