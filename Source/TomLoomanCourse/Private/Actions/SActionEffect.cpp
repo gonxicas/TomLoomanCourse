@@ -43,6 +43,13 @@ void USActionEffect::StopAction_Implementation(AActor* Instigator)
 	Component->RemoveAction(this);
 }
 
+float USActionEffect::GetTimeRemaining() const
+{
+	auto EndTime = TimeStarted + Duration;
+	
+	return EndTime - GetWorld()->GetTimeSeconds();
+}
+
 
 void USActionEffect::ExecutePeriodicEffect_Implementation(AActor* Instigator)
 {
