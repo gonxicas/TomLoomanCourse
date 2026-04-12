@@ -36,6 +36,7 @@ protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_RepData")
 	FActionWrappedData RepData;
 	
+	UPROPERTY(Replicated)
 	float TimeStarted;
 	
 	UFUNCTION()
