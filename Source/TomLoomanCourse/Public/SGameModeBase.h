@@ -7,14 +7,35 @@
 #include "SGameModeBase.generated.h"
 
 
+class USMonsterData;
 class USSaveGame;
 class ASPickUpTemplate;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
-/**
- * 
- */
+class UDataTable;
+
+
+USTRUCT(BlueprintType)
+struct FMonsterInfoRow : public FTableRowBase
+{
+	GENERATED_BODY()
+	
+	FMonsterInfoRow() : Weight(1.f), SpawnCost(5.f), KillReward(20.f) {}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<USMonsterData> MonsterData;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Weight;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SpawnCost;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float KillReward;
+};
+
 UCLASS()
 class TOMLOOMANCOURSE_API ASGameModeBase : public AGameModeBase
 {
@@ -26,6 +47,8 @@ public:
 protected:
 	
 	FString SlotName;
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	TObjectPtr<UDataTable> MonsterDataTable;
 	
 	UPROPERTY()
 	TObjectPtr<USSaveGame> CurrentSaveGame;

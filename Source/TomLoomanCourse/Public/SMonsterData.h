@@ -1,0 +1,24 @@
+﻿#pragma once
+
+#include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
+#include "SMonsterData.generated.h"
+
+class USAction;
+
+UCLASS()
+class TOMLOOMANCOURSE_API USMonsterData : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Info")
+	TSubclassOf<AActor> MonsterClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Info")
+	TArray<TSubclassOf<USAction>> Actions;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Info")
+	TObjectPtr<UTexture2D> Icon;
+	
+};

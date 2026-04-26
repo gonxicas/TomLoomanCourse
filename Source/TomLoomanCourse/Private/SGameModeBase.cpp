@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/SSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
+#include "SMonsterData.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true,
                                                 TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
@@ -125,8 +126,19 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 		DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
 		return;
 	}
-
-	GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+	
+	if (MonsterDataTable)
+	{
+		TArray<FMonsterInfoRow*> Rows;
+		MonsterDataTable->GetAllRows("", Rows);
+		auto RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+		auto SelectedRow = Rows[RandomIndex];
+		
+		GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Locations[0], FRotator::ZeroRotator);
+		
+	}
+	
+	
 }
 
 void ASGameModeBase::OnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
