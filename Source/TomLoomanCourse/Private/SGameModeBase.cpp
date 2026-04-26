@@ -12,6 +12,8 @@
 #include "SaveSystem/SSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "SMonsterData.h"
+#include "Actions/SActionComponent.h"
+#include "TomLoomanCourse/TomLoomanCourse.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true,
                                                 TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
@@ -133,9 +135,19 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 		MonsterDataTable->GetAllRows("", Rows);
 		auto RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
 		auto SelectedRow = Rows[RandomIndex];
-		
-		GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Locations[0], FRotator::ZeroRotator);
-		
+
+		if (const auto NewBot = GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Locations[0], FRotator::ZeroRotator))
+		{
+			LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(SelectedRow->MonsterData)));
+
+			if (const auto ActionComp = NewBot->GetComponentByClass<USActionComponent>())
+			{
+				for (const auto& Action : SelectedRow->MonsterData->Actions)
+				{
+					ActionComp->AddAction(NewBot, Action);
+				}
+			}
+		}
 	}
 	
 	
