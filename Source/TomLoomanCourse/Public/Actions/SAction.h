@@ -25,7 +25,7 @@ class TOMLOOMANCOURSE_API USAction : public UObject
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UTexture2D> Icon;
+	TSoftObjectPtr<UTexture2D> Icon;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
 	FGameplayTagContainer GrantedTags;
