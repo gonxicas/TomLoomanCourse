@@ -24,7 +24,7 @@ struct FMonsterInfoRow : public FTableRowBase
 	FMonsterInfoRow() : Weight(1.f), SpawnCost(5.f), KillReward(20.f) {}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TObjectPtr<USMonsterData> MonsterData;
+	FPrimaryAssetId MonsterId;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Weight;
@@ -90,6 +90,7 @@ protected:
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 

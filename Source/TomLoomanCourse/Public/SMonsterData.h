@@ -20,5 +20,10 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Info")
 	TObjectPtr<UTexture2D> Icon;
+
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("Monsters", GetFName());
+	}
 	
 };
