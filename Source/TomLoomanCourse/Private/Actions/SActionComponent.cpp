@@ -4,6 +4,8 @@
 #include "Net/UnrealNetwork.h"
 #include "TomLoomanCourse/TomLoomanCourse.h"
 
+DECLARE_CYCLE_STAT(TEXT("StartAction"), STAT_StartAction, STATGROUP_STANFORD);
+
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -88,6 +90,7 @@ void USActionComponent::RemoveAction(USAction* ActionToRemove)
 
 bool USActionComponent::StartAction(AActor* Instigator, FName ActionName)
 {
+	SCOPE_CYCLE_COUNTER(STAT_StartAction);
 	for (USAction* Action : Actions)
 	{
 		
