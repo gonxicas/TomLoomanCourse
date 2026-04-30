@@ -105,6 +105,7 @@ bool USActionComponent::StartAction(AActor* Instigator, FName ActionName)
 			{
 				ServerStartAction(Instigator, ActionName);
 			}
+			TRACE_BOOKMARK(TEXT("StartAction::%s"), *GetNameSafe(Action));
 			Action->StartAction(Instigator);
 			return true;
 		}
