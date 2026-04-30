@@ -21,7 +21,7 @@ ASAICharacter::ASAICharacter()
 	ActionComponent = CreateDefaultSubobject<USActionComponent>("ActionComponent");
 	TimeToHitParamName = "TimeToHit";
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	
 	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
