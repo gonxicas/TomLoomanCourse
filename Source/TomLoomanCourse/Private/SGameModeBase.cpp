@@ -14,6 +14,7 @@
 #include "SMonsterData.h"
 #include "Actions/SActionComponent.h"
 #include "Engine/AssetManager.h"
+
 #include "TomLoomanCourse/TomLoomanCourse.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true,
@@ -30,9 +31,22 @@ ASGameModeBase::ASGameModeBase()
 	SlotName = "SaveGame02";
 }
 
+void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+	
+	auto SelectedSavedSlot = UGameplayStatics::ParseOption(Options, "savegame");
+	if (SelectedSavedSlot.Len() > 0)
+	{
+		SlotName = SelectedSavedSlot;
+	}
+	
+}
+
 void ASGameModeBase::StartPlay()
 {
 	Super::StartPlay();
+	
 	LoadSaveGame();
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed,
 	                                SpawnTimerInterval, true);
