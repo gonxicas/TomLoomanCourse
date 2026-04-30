@@ -11,6 +11,7 @@
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
 {
+	InitialLifeSpan = 10.f;
 }
 
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
